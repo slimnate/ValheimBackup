@@ -1,0 +1,60 @@
+﻿<Window x:Class="ValheimBackup.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ValheimBackup"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="600"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="23" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <Label Content="Server List:" Grid.Row="0" Style="{StaticResource FormSectionHeadingStyle}"/>
+        <ListView x:Name="ListServers" ItemsSource="{Binding Path=ServerList}" Grid.Row="1" >
+            
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="{Binding Path=Name}" Grid.Row="0" Style="{StaticResource ServerTemplateLabelStyle}" />
+                        <Label Content="Connection: " Grid.Row="1" Style="{StaticResource ServerTemplateLabelStyle}" />
+                        <Label Content="Settings: " Grid.Row="2" Style="{StaticResource ServerTemplateLabelStyle}" />
+
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                            <Label Content="{Binding Path=Description}" Style="{StaticResource ServerTemplateDescriptionStyle}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                            <Label Content="{Binding Path=ConnectionInfo}" Style="{StaticResource ServerTemplateHostStyle}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                            <Label Content="{Binding Path=BackupSettings}" Style="{StaticResource ServerTemplateSettingsStyle}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <StackPanel Grid.Row="2" Style="{StaticResource FormBottomButtonBarStyle}">
+            <Button x:Name="ButtonRemoveServer" Content="Remove" Click="ButtonRemoveServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
+            <Button x:Name="ButtonEditServer" Content="Edit" Click="ButtonEditServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
+            <Button x:Name="ButtonAddServer" Content="Add Server" Click="ButtonAddServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>

@@ -1,0 +1,109 @@
+﻿<Window x:Class="ValheimBackup.ServerFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:ValheimBackup"
+        mc:Ignorable="d"
+        Title="Add/Update Server"
+        Height="625.237"
+        Width="500">
+    <!-- content -->
+    <Grid Width="Auto" Height="Auto" Margin="0,0,0,1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" /> <!-- labels -->
+            <ColumnDefinition Width="*" /> <!-- data -->
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <!-- basic info rows-->
+            <RowDefinition Height="23"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <!-- connection details rows -->
+            <RowDefinition Height="23"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <!-- connection details rows -->
+            <RowDefinition Height="23"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <!-- button row -->
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Basic info section -->
+        <Label Content="Basic Info:" Grid.Row="0" Style="{StaticResource FormSectionHeadingStyle}"/>
+
+        <Label Content="Name:" Grid.Row="1" Style="{StaticResource FormDataLabelStyle}"/>
+        <Label Content="Description:" Grid.Row="2" Style="{StaticResource FormDataLabelStyle}"/>
+        
+        <TextBox x:Name="TextName" Text="{Binding Path=Name}" Grid.Row="1" Style="{StaticResource FormDataInputStyle}"/>
+        <TextBox x:Name="TextDescription" Text="{Binding Path=Description}" Grid.Row="2" Style="{StaticResource FormDataInputStyle}"/>
+
+        <!-- connection info section-->
+        <Label Content="Connection Details:" Grid.Row="3" Style="{StaticResource FormSectionHeadingStyle}"/>
+
+        <Label Content="Host/IP Address:" Grid.Row="4" Style="{StaticResource FormDataLabelStyle}"/>
+        <Label Content="Port:" Grid.Row="5" Style="{StaticResource FormDataLabelStyle}"/>
+        <Label Content="Username:" Grid.Row="6" Style="{StaticResource FormDataLabelStyle}"/>
+        <Label Content="Password:" Grid.Row="7" Style="{StaticResource FormDataLabelStyle}"/>
+
+        <TextBox x:Name="TextHost" Text="{Binding Path=ConnectionInfo.Host}" Grid.Row="4" Style="{StaticResource FormDataInputStyle}"/>
+        <TextBox x:Name="TextPort" Text="{Binding Path=ConnectionInfo.Port}" Grid.Row="5" Style="{StaticResource FormDataInputStyle}"/>
+        <TextBox x:Name="TextUsername" Text="{Binding Path=ConnectionInfo.Username}" Grid.Row="6" Style="{StaticResource FormDataInputStyle}"/>
+        <TextBox x:Name="TextPassword" Text="{Binding Path=ConnectionInfo.Password}" Grid.Row="7" Style="{StaticResource FormDataInputStyle}"/>
+        
+        <!-- backup settings -->
+        <Label Content="Backup Settings:" Grid.Row="8" Style="{StaticResource FormSectionHeadingStyle}" />
+        <Label Content="Start Date:" Grid.Row="9" Style="{StaticResource FormDataLabelStyle}" />
+        <Label Content="End Date:" Grid.Row="10" Style="{StaticResource FormDataLabelStyle}" />
+        <Label Content="Backup Frequency:" Grid.Row="11" Style="{StaticResource FormDataLabelStyle}" />
+        <Label Content="Cleanup Frequency:" Grid.Row="12" Style="{StaticResource FormDataLabelStyle}" />
+        <Label Content="World Directory:" Grid.Row="13" Style="{StaticResource FormDataLabelStyle}" />
+        <Label Content="Backup Directory:" Grid.Row="14" Style="{StaticResource FormDataLabelStyle}" />
+        <Label Content="World Selection:" Grid.Row="15" Style="{StaticResource FormDataLabelStyle}" />
+        <Label Content="Selected Worlds:" Grid.Row="16" Style="{StaticResource FormDataLabelStyle}" />
+
+        <StackPanel Grid.Row="9" Style="{StaticResource FormDataInputGroupPanel}">
+            <xctk:DateTimePicker x:Name="DatePickerBackupStart" Value="{Binding Path=BackupSettings.Schedule.StartDate}" Style="{StaticResource FormDataDatePickerStyle}" />
+        </StackPanel>
+        <StackPanel Grid.Row="10" Style="{StaticResource FormDataInputGroupPanel}">
+            <CheckBox x:Name="CheckBoxBackupEndDate" Content="Never" IsChecked="{Binding ElementName=DatePickerBackupScheduleEnd, Path=IsEnabled, Converter={StaticResource InverseBooleanConverter}}" Style="{StaticResource FormDataInlineCheckStyle}"/>
+            <xctk:DateTimePicker x:Name="DatePickerBackupScheduleEnd" Value="{Binding Path=BackupSettings.Schedule.EndDate}" Style="{StaticResource FormDataDatePickerStyle}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="11" Style="{StaticResource FormDataInputGroupPanel}">
+            <Label Content="Every " />
+            <TextBox x:Name="TextBackupFrequencyAmount" Text="{Binding Path=BackupSettings.Schedule.Frequency.Amount}" Style="{StaticResource FormDataInlineTextStyle}" />
+            <ComboBox x:Name="ComboBackupFrequencyPeriod" ItemsSource="{Binding Source={StaticResource BackupPeriodValues}}" SelectedItem="{Binding Path=BackupSettings.Schedule.Frequency.Period}" Style="{StaticResource FormDataInlineComboStyle}" />
+        </StackPanel>
+        <StackPanel Grid.Row="12" Style="{StaticResource FormDataInputGroupPanel}">
+            <Label Content="Every " />
+            <TextBox x:Name="TextCleanupFrequencyAmount" Text="{Binding Path=BackupSettings.Schedule.Frequency.Amount}" Width="60" Style="{StaticResource FormDataInlineTextStyle}" />
+            <ComboBox x:Name="ComboCleanupFrequencyPeriod" ItemsSource="{Binding Source={StaticResource BackupPeriodValues}}" SelectedItem="{Binding Path=BackupSettings.Schedule.Frequency.Period}" Style="{StaticResource FormDataInlineComboStyle}" />
+        </StackPanel>
+        <TextBox x:Name="TextWorldDirectory" Text="{Binding Path=BackupSettings.WorldDirectory}" Grid.Row="13" Style="{StaticResource FormDataInputStyle}"/>
+        <TextBox x:Name="TextBackupDirectory" Text="{Binding Path=BackupSettings.BackupDirectory}" Grid.Row="14" Style="{StaticResource FormDataInputStyle}"/>
+        <StackPanel Grid.Row="15" Style="{StaticResource FormDataInputGroupPanel}">
+            <Label Content="Backup " />
+            <ComboBox Name="ComboBackupWorldSelection" ItemsSource="{Binding Source={StaticResource WorldSelectionValues}}" SelectedItem="{Binding Path=BackupSettings.WorldSelection}" Style="{StaticResource FormDataInlineComboStyle}" />
+            <Label Content=" worlds." />
+        </StackPanel>
+        <TextBox x:Name="TextSelectedWorlds" Grid.Row="16" Text="{Binding Path=BackupSettings.SelectedWorlds, Converter={StaticResource ListTextConverter}, Mode=TwoWay}" IsEnabled="{Binding ElementName=ComboBackupWorldSelection, Path=SelectedItem, Converter={StaticResource WorldSelectionBooleanConverter}}" Style="{StaticResource FormDataWorldListStyle}" />
+
+        <!-- form action buttons -->
+        <StackPanel Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource FormBottomButtonBarStyle}">
+            <Button x:Name="ButtonCancel" Content="Cancel" IsCancel="True" Style="{StaticResource FormBottomButtonStyle}"/>
+            <Button x:Name="ButtonSubmit" Content="Save" IsDefault="True" Click="ButtonSubmit_Click" Style="{StaticResource FormBottomButtonStyle}"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>
