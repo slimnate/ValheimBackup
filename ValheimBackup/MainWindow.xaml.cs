@@ -23,7 +23,7 @@ namespace ValheimBackup
     /// </summary>
     public partial class MainWindow : Window
     {
-        public BetterObservableCollection<Server> servers;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -34,15 +34,8 @@ namespace ValheimBackup
                 new Server("Server 3", "server 3 description", new FtpConnectionInfo("10.54.221.9", "16543", "user", "pass"), BackupSettings.Default),
                 new Server("Server 4", "server 4 description", new FtpConnectionInfo("10.99.108.224", "9898", "user", "pass"), BackupSettings.Default),
             };
-            servers = new BetterObservableCollection<Server>(sampleServers);
-            ListServers.ItemsSource = servers;
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            //init end date checkbox
-
-            //init world selection list
+            App.Servers = new BetterObservableCollection<Server>(sampleServers);
+            this.DataContext = App.Servers;
         }
 
         private void ButtonAddServer_Click(object sender, RoutedEventArgs e)
@@ -52,7 +45,7 @@ namespace ValheimBackup
 
             if(result == true)
             {
-                servers.Add(dialog.Server);
+                App.Servers.Add(dialog.Server);
             }
         }
 
@@ -66,7 +59,7 @@ namespace ValheimBackup
 
             if(result == MessageBoxResult.OK)
             {
-                servers.Remove(server);
+                App.Servers.Remove(server);
             }
         }
 
@@ -81,7 +74,7 @@ namespace ValheimBackup
 
             if(result == true)
             {
-                servers.Replace(original, copy);
+                App.Servers.Replace(original, copy);
             }
 
             return;
