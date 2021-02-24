@@ -48,6 +48,16 @@ namespace ValheimBackup
             this.Server = context;
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            //init end date checkbox
+            if(Server.BackupSettings.Schedule.EndDate == null)
+            {
+                CheckBoxBackupEndDate.IsChecked = true;
+            }
+        }
+
         // EVENT HANDLERS
         private void ButtonSubmit_Click(object sender, RoutedEventArgs e)
         {
@@ -57,6 +67,16 @@ namespace ValheimBackup
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
+        }
+
+        private void CheckBoxBackupEndDate_Checked(object sender, RoutedEventArgs e)
+        {
+            Server.BackupSettings.Schedule.EndDate = null;
+        }
+
+        private void CheckBoxBackupEndDate_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Server.BackupSettings.Schedule.EndDate = Server.BackupSettings.Schedule.StartDate.Value.AddDays(365);
         }
     }
 }
