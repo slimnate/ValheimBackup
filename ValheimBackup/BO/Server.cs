@@ -1,15 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ValheimBackup.BO
 {
-    public class Server
+    public class Server : INotifyPropertyChanged
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        private string _name;
+        private string _description;
+
+        public string Name {
+            get => _name;
+            set
+            {
+                if(_name != value)
+                {
+                    _name = value;
+                    NotifyPropertyChanged("Name");
+                }
+            }
+        }
+        public string Description {
+            get => _description;
+            set
+            {
+                if(_description != value)
+                {
+                    _description = value;
+                    NotifyPropertyChanged("Description");
+                }
+            }
+        }
         public FtpConnectionInfo ConnectionInfo { get; set; }
         public BackupSettings BackupSettings { get; set; }
         public List<Backup> Backups { get; set; }
@@ -29,6 +53,16 @@ namespace ValheimBackup.BO
             this.Description = desc;
             this.ConnectionInfo = connectionInfo;
             this.BackupSettings = backupSettings;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public override string ToString()

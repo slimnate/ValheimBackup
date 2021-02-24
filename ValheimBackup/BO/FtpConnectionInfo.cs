@@ -1,17 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ValheimBackup.BO
 {
-    public class FtpConnectionInfo
+    public class FtpConnectionInfo : INotifyPropertyChanged
     {
-        public string Host { get; set; }
-        public string Port { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        private string _host;
+        private string _port;
+        private string _username;
+        private string _password;
+
+        public string Host
+        {
+            get => _host;
+            set
+            {
+                if (_host != value)
+                {
+                    _host = value;
+                    NotifyPropertyChanged("Host");
+                }
+            }
+        }
+        public string Port
+        {
+            get => _port;
+            set
+            {
+                if (_port != value)
+                {
+                    _port = value;
+                    NotifyPropertyChanged("Port");
+                }
+            }
+        }
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                if (_username != value)
+                {
+                    _username = value;
+                    NotifyPropertyChanged("Username");
+                }
+            }
+        }
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                if (_password != value)
+                {
+                    _password = value;
+                    NotifyPropertyChanged("Password");
+                }
+            }
+        }
 
         public FtpConnectionInfo(string host, string port, string username, string password)
         {
@@ -19,6 +69,16 @@ namespace ValheimBackup.BO
             this.Port = port;
             this.Username = username;
             this.Password = password;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public override string ToString()
