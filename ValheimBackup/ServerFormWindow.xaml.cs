@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ValheimBackup.BO;
+using ValheimBackup.FTP;
 
 namespace ValheimBackup
 {
@@ -77,6 +78,12 @@ namespace ValheimBackup
         private void CheckBoxBackupEndDate_Unchecked(object sender, RoutedEventArgs e)
         {
             Server.BackupSettings.Schedule.EndDate = Server.BackupSettings.Schedule.StartDate.Value.AddDays(365);
+        }
+
+        private void ButtonTestFtp_Click(object sender, RoutedEventArgs e)
+        {
+            var res = FtpManager.Test(Server.ConnectionInfo);
+            MessageBox.Show(res ? "Connected" : "Unable to connect.");
         }
     }
 }

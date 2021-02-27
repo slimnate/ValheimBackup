@@ -52,12 +52,12 @@
 
         <!-- connection info section-->
         <Label Content="Connection Details:" Grid.Row="3" Style="{StaticResource FormSectionHeadingStyle}"/>
-
         <Label Content="Host/IP Address:" Grid.Row="4" Style="{StaticResource FormDataLabelStyle}"/>
         <Label Content="Port:" Grid.Row="5" Style="{StaticResource FormDataLabelStyle}"/>
         <Label Content="Username:" Grid.Row="6" Style="{StaticResource FormDataLabelStyle}"/>
         <Label Content="Password:" Grid.Row="7" Style="{StaticResource FormDataLabelStyle}"/>
 
+        <Button x:Name="ButtonTestFtp" Content="Test FTP Connection" Grid.Row="3" Style="{StaticResource FormDataFtpButtonStyle}" Click="ButtonTestFtp_Click"/>
         <TextBox x:Name="TextHost" Text="{Binding Path=ConnectionInfo.Host}" Grid.Row="4" Style="{StaticResource FormDataInputStyle}"/>
         <TextBox x:Name="TextPort" Text="{Binding Path=ConnectionInfo.Port}" Grid.Row="5" Style="{StaticResource FormDataInputStyle}"/>
         <TextBox x:Name="TextUsername" Text="{Binding Path=ConnectionInfo.Username}" Grid.Row="6" Style="{StaticResource FormDataInputStyle}"/>
