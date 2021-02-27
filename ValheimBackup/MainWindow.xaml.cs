@@ -27,14 +27,6 @@ namespace ValheimBackup
         public MainWindow()
         {
             InitializeComponent();
-            var sampleServers = new List<Server>
-            {
-                new Server("Server 1", "server 1 description", new FtpConnectionInfo("127.0.0.1", "5000", "user", "pass"), BackupSettings.Default),
-                new Server("Server 2", "server 2 description", new FtpConnectionInfo("198.125.56.87", "64800", "user", "pass"), BackupSettings.Default),
-                new Server("Server 3", "server 3 description", new FtpConnectionInfo("10.54.221.9", "16543", "user", "pass"), BackupSettings.Default),
-                new Server("Server 4", "server 4 description", new FtpConnectionInfo("10.99.108.224", "9898", "user", "pass"), BackupSettings.Default),
-            };
-            App.Servers = new BetterObservableCollection<Server>(sampleServers);
             this.DataContext = App.Servers;
         }
 
