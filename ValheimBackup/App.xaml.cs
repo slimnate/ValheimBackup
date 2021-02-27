@@ -61,12 +61,14 @@ namespace ValheimBackup
         {
             //deserialize application data
             Servers = new BetterObservableCollection<Server>(ServerDataManager.LoadData());
+            Backups = new BetterObservableCollection<Backup>(BackupDataManager.LoadData());
 
             //add event listeners to save each time server collection changes.
-            Servers.CollectionChanged += Servers_Changed;
+            Servers.CollectionChanged += PersistantData_Changed;
+            Backups.CollectionChanged += PersistantData_Changed;
         }
 
-        private void Servers_Changed(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void PersistantData_Changed(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             PersistAppData();
         }
@@ -76,7 +78,7 @@ namespace ValheimBackup
             //serialize application data
             ServerDataManager.SaveData(Servers.ToList());
 
-           // BackupDataManager.SaveData(Backups);
+            BackupDataManager.SaveData(Backups.ToList());
 
             //save user settings
             //https://docs.microsoft.com/en-us/visualstudio/ide/managing-application-settings-dotnet?view=vs-2019

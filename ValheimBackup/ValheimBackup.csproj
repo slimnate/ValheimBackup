@@ -78,6 +78,7 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\ListTextConverter.cs" />
     <Compile Include="Converters\WorldSelectionBooleanConverter.cs" />
+    <Compile Include="Data\BackupDataManager.cs" />
     <Compile Include="Data\ServerDataManager.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\BetterObservableCollection.cs" />
