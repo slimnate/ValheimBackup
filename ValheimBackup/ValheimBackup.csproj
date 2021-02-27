@@ -82,6 +82,7 @@
     <Compile Include="Data\ServerDataManager.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\BetterObservableCollection.cs" />
+    <Compile Include="FTP\FtpFileInfo.cs" />
     <Compile Include="FTP\FtpManager.cs" />
     <Compile Include="ServerFormWindow.xaml.cs">
       <DependentUpon>ServerFormWindow.xaml</DependentUpon>

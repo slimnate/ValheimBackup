@@ -82,8 +82,55 @@ namespace ValheimBackup
 
         private void ButtonTestFtp_Click(object sender, RoutedEventArgs e)
         {
-            var res = FtpManager.Test(Server.ConnectionInfo);
-            MessageBox.Show(res ? "Connected" : "Unable to connect.");
+            try
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                FtpManager.Test(Server.ConnectionInfo);
+                MessageBox.Show("FTP Test Connection successful.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (FtpException ex)
+            {
+                MessageBox.Show("FtpRequestException:\r\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            } finally
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+            }
+        }
+
+        private void ComboBackupWorldSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if((WorldSelection)ComboBackupWorldSelection.SelectedItem == WorldSelection.Specific)
+            {
+                populateRemoteWorlds();
+            }
+        }
+
+        private void populateRemoteWorlds()
+        {
+            try
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                var files = FtpManager.ListFiles(Server.ConnectionInfo, Server.BackupSettings.WorldDirectory);
+                var worldNames = new List<string>();
+
+                foreach (FtpFileInfo file in files)
+                {
+                    if (file.Extension == ".db")
+                    {
+                        worldNames.Add(file.Name);
+                    }
+                }
+                Server.BackupSettings.SelectedWorlds = worldNames;
+            }
+            catch(FtpException e)
+            {
+                MessageBox.Show("Unable to connect to remote server to populate the selected server list:\r\n"
+                    + e.Message, "Check your FTP Settings!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+            }
         }
     }
 }
