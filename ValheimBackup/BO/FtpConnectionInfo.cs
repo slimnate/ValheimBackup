@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ValheimBackup.BO
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class FtpConnectionInfo : INotifyPropertyChanged
     {
         private string _host;
@@ -14,6 +16,7 @@ namespace ValheimBackup.BO
         private string _username;
         private string _password;
 
+        [JsonProperty]
         public string Host
         {
             get => _host;
@@ -26,6 +29,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string Port
         {
             get => _port;
@@ -38,6 +43,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string Username
         {
             get => _username;
@@ -50,6 +57,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string Password
         {
             get => _password;
