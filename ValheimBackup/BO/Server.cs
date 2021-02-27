@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace ValheimBackup.BO
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Server : INotifyPropertyChanged
     {
         private string _name;
         private string _description;
 
+        [JsonProperty]
         public string Name {
             get => _name;
             set
@@ -23,6 +26,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string Description {
             get => _description;
             set
@@ -34,8 +39,13 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public FtpConnectionInfo ConnectionInfo { get; set; }
+
+        [JsonProperty]
         public BackupSettings BackupSettings { get; set; }
+
         public List<Backup> Backups { get; set; }
 
         //computed properties

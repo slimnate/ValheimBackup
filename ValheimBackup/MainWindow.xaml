@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ValheimBackup"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="600"
-        Loaded="Window_Loaded">
+        Title="MainWindow" Height="450" Width="600">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -18,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <Label Content="Server List:" Grid.Row="0" Style="{StaticResource FormSectionHeadingStyle}"/>
-        <ListView x:Name="ListServers" ItemsSource="{Binding Path=ServerList}" Grid.Row="1" >
+        <ListView x:Name="ListServers" ItemsSource="{Binding}" Grid.Row="1" >
             
             <ListView.ItemTemplate>
                 <DataTemplate>

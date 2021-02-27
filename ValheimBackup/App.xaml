@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:ValheimBackup"
              xmlns:bo="clr-namespace:ValheimBackup.BO"
              xmlns:converters="clr-namespace:ValheimBackup.Converters"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             Startup="Application_Startup"
+             Exit="Application_Exit">
     <Application.Resources>
         <!-- styles -->
         <Style x:Key="FormSectionHeadingStyle" TargetType="Label"> <!-- heading label -->

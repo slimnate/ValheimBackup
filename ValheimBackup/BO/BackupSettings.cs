@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValheimBackup.Properties;
 
 namespace ValheimBackup.BO
 {
@@ -35,6 +37,7 @@ namespace ValheimBackup.BO
     /// <summary>
     /// Represents all the information about how and when to backup worlds for a specific server.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class BackupSettings : INotifyPropertyChanged
     {
         private DateTime _lastBackup;
@@ -55,6 +58,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string WorldDirectory
         {
             get => _worldDirectory;
@@ -67,6 +72,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string BackupDirectory
         {
             get => _backupDirectory;
@@ -79,6 +86,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public WorldSelection WorldSelection
         {
             get => _worldSelection;
@@ -91,6 +100,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public List<string> SelectedWorlds
         {
             get => _selectedWorlds;
@@ -104,7 +115,10 @@ namespace ValheimBackup.BO
             }
         }
 
+        [JsonProperty]
         public BackupSchedule Schedule { get; set; }
+
+        [JsonProperty]
         public CleanupFrequency CleanupSchedule { get; set; }
 
         public static BackupSettings Default
@@ -115,9 +129,9 @@ namespace ValheimBackup.BO
                 {
                     Schedule = new BackupSchedule(new BackupFrequency(30, BackupPeriod.Minutes)),
                     WorldDirectory = "/save/worlds",
-                    BackupDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "valheim_backup"),
+                    BackupDirectory = Settings.Default.DefaultBackupDirectory,
                     WorldSelection = WorldSelection.All,
-                    SelectedWorlds = new List<string>() { "world1", "world2" },
+                    SelectedWorlds = new List<string>(),
                     CleanupSchedule = new CleanupFrequency(10, CleanupPeriod.Copies)
                 };
             }
@@ -149,11 +163,14 @@ namespace ValheimBackup.BO
     /// <summary>
     /// Represents a schedule for backing up world files.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class BackupSchedule : INotifyPropertyChanged
     {
         private DateTime? _startDate;
         private DateTime? _endDate;
 
+
+        [JsonProperty]
         public DateTime? StartDate
         {
             get => _startDate;
@@ -166,6 +183,9 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+
+        [JsonProperty]
         public DateTime? EndDate
         {
             get => _endDate;
@@ -178,7 +198,11 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public BackupFrequency Frequency { get; set; }
+
+        public BackupSchedule() { }
 
         public BackupSchedule(BackupFrequency frequency)
             : this(frequency, DateTime.Now) { }
@@ -213,11 +237,13 @@ namespace ValheimBackup.BO
     /// Represents the frequency of occurance for a backup event in the form of "every {amount} {unit}".
     /// eg. every 2 days, every 30 minutes, every 1 week
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class BackupFrequency : INotifyPropertyChanged
     {
         private int _amount;
         private BackupPeriod _period;
-        
+
+        [JsonProperty]
         public int Amount
         {
             get => _amount;
@@ -230,6 +256,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public BackupPeriod Period
         {
             get => _period;
@@ -264,11 +292,13 @@ namespace ValheimBackup.BO
     /// Represents the frequency of occurance for cleanup events in the form of "every {amount} {unit}".
     /// eg. every 2 days, every 30 minutes, every 10 copies
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class CleanupFrequency : INotifyPropertyChanged
     {
         private int _amount;
         private CleanupPeriod _period;
 
+        [JsonProperty]
         public int Amount
         {
             get => _amount;
@@ -281,6 +311,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public CleanupPeriod Period
         {
             get => _period;
