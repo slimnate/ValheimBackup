@@ -72,6 +72,14 @@ namespace ValheimBackup.BO
             }
         }
 
+        public string FullUri
+        {
+            get
+            {
+                return Host + ":" + Port;
+            }
+        }
+
         public FtpConnectionInfo(string host, string port, string username, string password)
         {
             this.Host = host;

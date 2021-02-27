@@ -52,12 +52,12 @@
 
         <!-- connection info section-->
         <Label Content="Connection Details:" Grid.Row="3" Style="{StaticResource FormSectionHeadingStyle}"/>
-
         <Label Content="Host/IP Address:" Grid.Row="4" Style="{StaticResource FormDataLabelStyle}"/>
         <Label Content="Port:" Grid.Row="5" Style="{StaticResource FormDataLabelStyle}"/>
         <Label Content="Username:" Grid.Row="6" Style="{StaticResource FormDataLabelStyle}"/>
         <Label Content="Password:" Grid.Row="7" Style="{StaticResource FormDataLabelStyle}"/>
 
+        <Button x:Name="ButtonTestFtp" Content="Test FTP Connection" Grid.Row="3" Style="{StaticResource FormDataFtpButtonStyle}" Click="ButtonTestFtp_Click"/>
         <TextBox x:Name="TextHost" Text="{Binding Path=ConnectionInfo.Host}" Grid.Row="4" Style="{StaticResource FormDataInputStyle}"/>
         <TextBox x:Name="TextPort" Text="{Binding Path=ConnectionInfo.Port}" Grid.Row="5" Style="{StaticResource FormDataInputStyle}"/>
         <TextBox x:Name="TextUsername" Text="{Binding Path=ConnectionInfo.Username}" Grid.Row="6" Style="{StaticResource FormDataInputStyle}"/>
@@ -88,14 +88,14 @@
         </StackPanel>
         <StackPanel Grid.Row="12" Style="{StaticResource FormDataInputGroupPanel}">
             <Label Content="Every " />
-            <TextBox x:Name="TextCleanupFrequencyAmount" Text="{Binding Path=BackupSettings.Schedule.Frequency.Amount}" Width="60" Style="{StaticResource FormDataInlineTextStyle}" />
-            <ComboBox x:Name="ComboCleanupFrequencyPeriod" ItemsSource="{Binding Source={StaticResource BackupPeriodValues}}" SelectedItem="{Binding Path=BackupSettings.Schedule.Frequency.Period}" Style="{StaticResource FormDataInlineComboStyle}" />
+            <TextBox x:Name="TextCleanupFrequencyAmount" Text="{Binding Path=BackupSettings.CleanupSchedule.Amount}" Width="60" Style="{StaticResource FormDataInlineTextStyle}" />
+            <ComboBox x:Name="ComboCleanupFrequencyPeriod" ItemsSource="{Binding Source={StaticResource CleanupPeriodValues}}" SelectedItem="{Binding Path=BackupSettings.CleanupSchedule.Period}" Style="{StaticResource FormDataInlineComboStyle}" />
         </StackPanel>
         <TextBox x:Name="TextWorldDirectory" Text="{Binding Path=BackupSettings.WorldDirectory}" Grid.Row="13" Style="{StaticResource FormDataInputStyle}"/>
         <TextBox x:Name="TextBackupDirectory" Text="{Binding Path=BackupSettings.BackupDirectory}" Grid.Row="14" Style="{StaticResource FormDataInputStyle}"/>
         <StackPanel Grid.Row="15" Style="{StaticResource FormDataInputGroupPanel}">
             <Label Content="Backup " />
-            <ComboBox Name="ComboBackupWorldSelection" ItemsSource="{Binding Source={StaticResource WorldSelectionValues}}" SelectedItem="{Binding Path=BackupSettings.WorldSelection}" Style="{StaticResource FormDataInlineComboStyle}" />
+            <ComboBox Name="ComboBackupWorldSelection" ItemsSource="{Binding Source={StaticResource WorldSelectionValues}}" SelectedItem="{Binding Path=BackupSettings.WorldSelection}" Style="{StaticResource FormDataInlineComboStyle}" SelectionChanged="ComboBackupWorldSelection_SelectionChanged" />
             <Label Content=" worlds." />
         </StackPanel>
         <TextBox x:Name="TextSelectedWorlds" Grid.Row="16" Text="{Binding Path=BackupSettings.SelectedWorlds, Converter={StaticResource ListTextConverter}, Mode=TwoWay}" IsEnabled="{Binding ElementName=ComboBackupWorldSelection, Path=SelectedItem, Converter={StaticResource WorldSelectionBooleanConverter}}" Style="{StaticResource FormDataWorldListStyle}" />

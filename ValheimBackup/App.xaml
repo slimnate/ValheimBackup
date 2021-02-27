@@ -16,6 +16,7 @@
             <Setter Property="Grid.ColumnSpan" Value="2" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Margin" Value="5, 0" />
+            <Setter Property="Height" Value="25" />
         </Style>
 
         <Style x:Key="FormDataLabelStyle" TargetType="Label"> <!-- data label -->
@@ -37,6 +38,11 @@
 
         <Style x:Key="FormDataInputStyle" TargetType="TextBox" BasedOn="{StaticResource FormDataElement}"> <!-- basic text box -->
             
+        </Style>
+
+        <Style x:Key="FormDataFtpButtonStyle" TargetType="Button" BasedOn="{StaticResource FormDataElement}">
+            <Setter Property="Height" Value="25" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
 
         <Style x:Key="FormDataDatePickerStyle" TargetType="xctk:DateTimePicker"> <!-- date time picker -->
