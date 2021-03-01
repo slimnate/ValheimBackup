@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValheimBackup", "ValheimBackup\ValheimBackup.csproj", "{358E69FB-9334-432F-8F72-C911A306E490}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValheimBackupService", "ValheimBackupService\ValheimBackupService.csproj", "{4DCB73F7-32BF-4D70-BFF8-BDD63D849C1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValheimBackupShared", "ValheimBackupShared\ValheimBackupShared.csproj", "{B47A2441-479C-4933-AD10-BCEF13EE4AD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{358E69FB-9334-432F-8F72-C911A306E490}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{358E69FB-9334-432F-8F72-C911A306E490}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{358E69FB-9334-432F-8F72-C911A306E490}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DCB73F7-32BF-4D70-BFF8-BDD63D849C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DCB73F7-32BF-4D70-BFF8-BDD63D849C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DCB73F7-32BF-4D70-BFF8-BDD63D849C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DCB73F7-32BF-4D70-BFF8-BDD63D849C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B47A2441-479C-4933-AD10-BCEF13EE4AD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B47A2441-479C-4933-AD10-BCEF13EE4AD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B47A2441-479C-4933-AD10-BCEF13EE4AD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B47A2441-479C-4933-AD10-BCEF13EE4AD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

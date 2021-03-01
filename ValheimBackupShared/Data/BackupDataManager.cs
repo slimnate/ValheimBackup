@@ -2,22 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ValheimBackup.BO;
-using ValheimBackup.Properties;
+using ValheimBackupShared.Properties;
 
 namespace ValheimBackup.Data
 {
-    public class ServerDataManager
+    public class BackupDataManager
     {
-        private static string ServersFilePath
+        private static string BackupsFilePath
         {
             get
             {
-                return Path.Combine(Settings.Default.AppDataDirectory, Settings.Default.ServersFileName);
+                return Path.Combine(Settings.Default.AppDataDirectory, Settings.Default.BackupsFileName);
             }
         }
 
@@ -28,42 +27,43 @@ namespace ValheimBackup.Data
                 Directory.CreateDirectory(Settings.Default.AppDataDirectory);
             }
 
-            if (!File.Exists(ServersFilePath))
+            if (!File.Exists(BackupsFilePath))
             {
-                using(File.Create(ServersFilePath)) {
+                using (File.Create(BackupsFilePath))
+                {
                     //empy using block to ensure stream closes
                 }
             }
         }
 
-        public static List<Server> LoadData()
+        public static List<Backup> LoadData()
         {
             try
             {
-                var serialized = File.ReadAllText(ServersFilePath);
-                var servers = JsonConvert.DeserializeObject<List<Server>>(serialized);
+                var serialized = File.ReadAllText(BackupsFilePath);
+                var backups = JsonConvert.DeserializeObject<List<Backup>>(serialized);
 
-                if (servers == null) servers = new List<Server>();
+                if (backups == null) backups = new List<Backup>();
 
-                return servers;
+                return backups;
             }
-            catch(FileNotFoundException e)
+            catch (FileNotFoundException e)
             {
-                Log("LoadData", "servers.json file does not exist, returning empty server list");
+                Log("LoadData", Settings.Default.BackupsFileName + " file does not exist, returning empty server list");
                 //return empty list if file not exists or any other exception.
-                return new List<Server>();
+                return new List<Backup>();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Log("LoadData", "Error loading data from " + ServersFilePath);
+                Log("LoadData", "Error loading data from " + BackupsFilePath);
                 Log("LoadData", e.GetType().FullName + " - " + e.Message);
 
                 //return empty list if file not exists or any other exception.
-                return new List<Server>();
+                return new List<Backup>();
             }
         }
 
-        public static void SaveData(List<Server> servers)
+        public static void SaveData(List<Backup> servers)
         {
             try
             {
@@ -72,17 +72,18 @@ namespace ValheimBackup.Data
 
                 var serialized = JsonConvert.SerializeObject(servers);
 
-                File.WriteAllText(ServersFilePath, serialized);
-            } catch(Exception e)
+                File.WriteAllText(BackupsFilePath, serialized);
+            }
+            catch (Exception e)
             {
-                Log("LoadData", "Error saving data to " + ServersFilePath);
+                Log("LoadData", "Error saving data to " + BackupsFilePath);
                 Log("LoadData", e.GetType().FullName + " - " + e.Message);
             }
         }
 
         private static void Log(string methodName, string message)
         {
-            Console.WriteLine("[ServerDataManager." + methodName + "]: " + message);
+            Console.WriteLine("[BackupDataManager." + methodName + "]: " + message);
         }
     }
 }

@@ -22,47 +22,5 @@ namespace ValheimBackup.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("servers.json")]
-        public string ServersFileName {
-            get {
-                return ((string)(this["ServersFileName"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("backups.json")]
-        public string BackupsFileName {
-            get {
-                return ((string)(this["BackupsFileName"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AppDataDirectory {
-            get {
-                return ((string)(this["AppDataDirectory"]));
-            }
-            set {
-                this["AppDataDirectory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DefaultBackupDirectory {
-            get {
-                return ((string)(this["DefaultBackupDirectory"]));
-            }
-            set {
-                this["DefaultBackupDirectory"] = value;
-            }
-        }
     }
 }
