@@ -10,12 +10,34 @@ namespace ValheimBackup.Data
 {
     public static class DataManager
     {
+        public static string AppDataDirectory
+        {
+            get
+            {
+                return Settings.Default.AppDataDirectory;
+            }
+        }
+        public static string ServersFilePath
+        {
+            get
+            {
+                return Path.Combine(AppDataDirectory, Settings.Default.ServersFileName);
+            }
+        }
+
+        public static string BackupsFilePath
+        {
+            get
+            {
+                return Path.Combine(AppDataDirectory, Settings.Default.BackupsFileName);
+            }
+        }
 
         private static string DefaultAppDataDirectory
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ValheimBackup");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ValheimBackup");
             }
         }
 
@@ -27,6 +49,7 @@ namespace ValheimBackup.Data
                 Settings.Default.AppDataDirectory = DefaultAppDataDirectory;
                 Settings.Default.DefaultBackupDirectory = Path.Combine(DefaultAppDataDirectory, "backups");
                 Settings.Default.Save();
+                return;
             }
         }
 

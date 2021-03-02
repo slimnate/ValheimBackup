@@ -8,6 +8,7 @@ namespace ValheimBackupService
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
+
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -29,23 +30,24 @@ namespace ValheimBackupService
         /// </summary>
         private void InitializeComponent()
         {
-            this.eventLog = new System.Diagnostics.EventLog();
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog)).BeginInit();
+            this.components = new System.ComponentModel.Container();
+            this.fileWatcher = new System.IO.FileSystemWatcher();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.fileWatcher)).BeginInit();
             // 
-            // eventLog
+            // fileWatcher
             // 
-            this.eventLog.Log = "Application";
-            this.eventLog.Source = "ValheimBackupService";
+            this.fileWatcher.EnableRaisingEvents = true;
             // 
             // ValheimBackupService
             // 
             this.ServiceName = "ValheimBackupService";
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fileWatcher)).EndInit();
 
         }
 
         #endregion
-
-        private System.Diagnostics.EventLog eventLog;
+        private System.IO.FileSystemWatcher fileWatcher;
+        private System.Windows.Forms.Timer timer1;
     }
 }
