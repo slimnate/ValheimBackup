@@ -30,9 +30,7 @@ namespace ValheimBackupService
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.fileWatcher = new System.IO.FileSystemWatcher();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.fileWatcher)).BeginInit();
             // 
             // fileWatcher
@@ -48,6 +46,5 @@ namespace ValheimBackupService
 
         #endregion
         private System.IO.FileSystemWatcher fileWatcher;
-        private System.Windows.Forms.Timer timer1;
     }
 }
