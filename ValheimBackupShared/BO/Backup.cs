@@ -5,15 +5,57 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValheimBackup.FTP;
+using Newtonsoft.Json;
 
 namespace ValheimBackup.BO
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Backup : INotifyPropertyChanged
     {
+        private long _id = -1;
+        private long _serverId;
         private string _worldName;
         private string _sourcePath;
         private string _destinationPath;
+        private DateTime _backupTime;
 
+        [JsonProperty]
+        public long Id
+        {
+            get
+            {
+                if (_id == -1)
+                {
+                    _id = DateTime.Now.ToBinary();
+                }
+                return _id;
+            }
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    NotifyPropertyChanged("Id");
+                }
+            }
+        }
+
+        [JsonProperty]
+        public long ServerId
+        {
+            get => _serverId;
+            set
+            {
+                if(_serverId != value)
+                {
+                    _serverId = value;
+                    NotifyPropertyChanged("ServerId");
+                }
+            }
+        }
+
+        [JsonProperty]
         public string WorldName
         {
             get => _worldName;
@@ -26,6 +68,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string SourcePath
         {
             get => _sourcePath;
@@ -38,6 +82,8 @@ namespace ValheimBackup.BO
                 }
             }
         }
+
+        [JsonProperty]
         public string DestinationPath
         {
             get => _destinationPath;
@@ -51,9 +97,34 @@ namespace ValheimBackup.BO
             }
         }
 
-        public Backup()
+        [JsonProperty]
+        public DateTime BackupTime
         {
+            get => _backupTime;
+            set
+            {
+                if (_backupTime != value)
+                {
+                    _backupTime = value;
+                    NotifyPropertyChanged("DestinationPath");
+                }
+            }
+        }
 
+        public Backup(Server server, FtpFileInfo fileInfo)
+        {
+            _serverId = server.Id;
+            _worldName = fileInfo.Name;
+            _sourcePath = Path.Combine(server.BackupSettings.WorldDirectory, fileInfo.FullName);
+            _backupTime = DateTime.Now;
+
+            var backupFileName = fileInfo.Name + TimeHash(_backupTime) + fileInfo.Extension;
+            _destinationPath = Path.Combine(server.BackupSettings.BackupDirectory, backupFileName);
+        }
+
+        public static string TimeHash(DateTime dt)
+        {
+            return "-" + dt.ToString("yyyyMMddHHmmss");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
