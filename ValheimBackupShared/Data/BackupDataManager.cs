@@ -31,7 +31,7 @@ namespace ValheimBackup.Data
             {
                 using (File.Create(BackupsFilePath))
                 {
-                    //empy using block to ensure stream closes
+                    //empty using block to ensure stream closes
                 }
             }
         }
@@ -63,14 +63,14 @@ namespace ValheimBackup.Data
             }
         }
 
-        public static void SaveData(List<Backup> servers)
+        public static void SaveData(List<Backup> backups)
         {
             try
             {
                 //make sure file and folder exists
                 createFileIfNotExist();
 
-                var serialized = JsonConvert.SerializeObject(servers);
+                var serialized = JsonConvert.SerializeObject(backups);
 
                 File.WriteAllText(BackupsFilePath, serialized);
             }

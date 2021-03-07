@@ -13,6 +13,8 @@ namespace ValheimBackup.FTP
     public class FtpManager
     {
         private const string LIST = WebRequestMethods.Ftp.ListDirectoryDetails;
+        private const string DOWNLOAD = WebRequestMethods.Ftp.DownloadFile;
+        private const string UPLOAD = WebRequestMethods.Ftp.UploadFile;
 
         /// <summary>
         /// 
@@ -159,6 +161,64 @@ namespace ValheimBackup.FTP
 
             //throw exception if we don't get the 150 Opening data status code
             throw new Exception("not connected");
+        }
+
+        public static List<FtpFileInfo> DownloadWorldFiles(Server server)
+        {
+            //variable definitions
+            var conn = server.ConnectionInfo;
+            var settings = server.BackupSettings;
+            string worldPath = settings.WorldDirectory;
+
+
+            //first get a list of all files in world path
+            var files = ListFiles(conn, worldPath);
+
+            //filter only files that should be backed up.
+            files = new List<FtpFileInfo>(files.Where(f =>  settings.ShouldBackup(f.Name, f.Extension)));
+
+            foreach(FtpFileInfo f in files)
+            {
+                try
+                {
+                    var path = Path.Combine(worldPath, f.FullName);
+                    var contents = DownloadFile(conn, path);
+
+                    f.Contents = contents;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error downloading file contents: ", e);
+                }
+            }
+
+            return files;
+        }
+
+        public static string DownloadFile(FtpConnectionInfo conn, string path)
+        {
+            var request = Request(conn, path, DOWNLOAD);
+            var response = TryResponse(request);
+
+            if(response.StatusCode == FtpStatusCode.OpeningData)
+            {
+                try
+                {
+                    using (Stream responseStream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(responseStream))
+                        {
+                            return reader.ReadToEnd();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new FtpResponseException("error reading response stream while downloading file: " + path, e);
+                }
+            }
+
+            throw new FtpResponseException("Unable to download file (incorrect status code): " + path);
         }
 
     }

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValheimBackup.BO;
+using ValheimBackup.FTP;
 using ValheimBackupShared.Properties;
 
 namespace ValheimBackup.Data
@@ -58,6 +60,50 @@ namespace ValheimBackup.Data
             //save user settings
             //https://docs.microsoft.com/en-us/visualstudio/ide/managing-application-settings-dotnet?view=vs-2019
             Settings.Default.Save();
+        }
+
+        public static List<Backup> BackupFtpFiles(Server server, List<FtpFileInfo> files)
+        {
+            var results = new List<Backup>();
+
+            foreach(FtpFileInfo file in files)
+            {
+                try
+                {
+                    var backup = SaveFtpFile(file, server);
+                } catch (Exception e)
+                {
+                    //TODO: Log this exception somewhere
+                }
+
+                results.Add(backup);
+            }
+
+            return results;
+        }
+
+        public static FileStream CreateAndOpenFile(string path)
+        {
+            string directory = Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
+            return File.Create(path);
+        }
+
+        public static Backup SaveFtpFile(FtpFileInfo file, Server server)
+        {
+            var worldName = file.Name;
+            var backup = new Backup(server, file);
+            var backupFilePath = backup.DestinationPath;
+
+            using (var stream = CreateAndOpenFile(backupFilePath))
+            {
+                using (StreamWriter writer = new StreamWriter(stream))
+                {
+                    writer.Write(file.Contents);
+                }
+            }
+
+            return backup;
         }
     }
 }
