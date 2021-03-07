@@ -11,8 +11,30 @@ namespace ValheimBackup.BO
     [JsonObject(MemberSerialization.OptIn)]
     public class Server : INotifyPropertyChanged
     {
+        private long _id = -1;
         private string _name;
         private string _description;
+
+        [JsonProperty]
+        public long Id
+        {
+            get
+            {
+                if (_id == -1)
+                {
+                    _id = DateTime.Now.ToBinary();
+                }
+                return _id;
+            }
+            set
+            {
+                if(_id != value)
+                {
+                    _id = value;
+                    NotifyPropertyChanged("Id");
+                }
+            }
+        }
 
         [JsonProperty]
         public string Name {

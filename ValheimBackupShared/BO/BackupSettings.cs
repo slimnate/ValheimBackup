@@ -152,6 +152,24 @@ namespace ValheimBackup.BO
             }
         }
 
+        private static readonly string[] VALID_EXTENSIONS = new string[] { ".db", ".fwl" };
+        public bool ShouldBackup(string fileName, string extension)
+        {
+            if (WorldSelection == WorldSelection.Specific) // specific worlds enabled
+            {
+                if(!SelectedWorlds.Contains(fileName)) // not in list
+                {
+                    return false;
+                }
+            }
+            if(!VALID_EXTENSIONS.Contains(extension)) // wrong extension
+            {
+                return false;
+            }
+
+            return true; // true if not tests failed
+        } 
+
         public override string ToString()
         {
             return "backing up " + WorldSelection.ToString() + " worlds " + Schedule.ToString();
