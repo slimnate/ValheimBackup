@@ -14,7 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ValheimBackup.BO;
+using ValheimBackup.Data;
 using ValheimBackup.Extensions;
+using ValheimBackup.FTP;
 
 namespace ValheimBackup
 {
@@ -69,6 +71,25 @@ namespace ValheimBackup
                 App.Servers.Replace(original, copy);
             }
 
+            return;
+        }
+
+        private void ButtonBackupServer_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListServers.SelectedItem == null) return;
+
+            var server = ListServers.SelectedItem as Server;
+
+            var files = FtpManager.DownloadWorldFiles(server);
+
+            var backups = DataManager.BackupFtpFiles(server, files);
+
+            foreach(var b in backups)
+            {
+                App.Backups.Add(b);
+            }
+
+            //save files to backup location
             return;
         }
     }
