@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ValheimBackup.BO;
 using ValheimBackup.Data;
+using ValheimBackup.FTP;
 using ValheimBackupShared.Properties;
 
 namespace ValheimBackupService
@@ -90,11 +91,21 @@ namespace ValheimBackupService
         private void OnTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             Server server = ((ServerBackupTimer)sender).Server;
-            var updateTime = e.SignalTime; //TODO: add last updated to backup upon completion
 
             ModalMessage("backing up server: " + server.NameAndDescription);
 
+            //download file from ftp server
+            var files = FtpManager.DownloadWorldFiles(server);
 
+            //Write files to disk
+            var backups = DataManager.BackupFtpFiles(server, files);
+
+            //save backup metadata to disk
+            BackupDataManager.AddBackups(backups);
+
+            ModalMessage("backup complete - " + backups.Count + " backups added");
+
+            //TODO: implement cleanup functionality, might not go here exactly
         }
 
         private void OnFileChanged(object sender, System.IO.FileSystemEventArgs e)

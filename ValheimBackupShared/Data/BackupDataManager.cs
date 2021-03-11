@@ -85,5 +85,17 @@ namespace ValheimBackup.Data
         {
             Console.WriteLine("[BackupDataManager." + methodName + "]: " + message);
         }
+
+        public static void AddBackups(List<Backup> toAdd)
+        {
+            //load in backups
+            var backups = LoadData();
+
+            //add new backups
+            backups.AddRange(toAdd);
+
+            //
+            SaveData(backups);
+        }
     }
 }

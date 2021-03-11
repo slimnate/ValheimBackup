@@ -71,12 +71,12 @@ namespace ValheimBackup.Data
                 try
                 {
                     var backup = SaveFtpFile(file, server);
+
+                    results.Add(backup);
                 } catch (Exception e)
                 {
                     //TODO: Log this exception somewhere
                 }
-
-                results.Add(backup);
             }
 
             return results;
@@ -91,7 +91,6 @@ namespace ValheimBackup.Data
 
         public static Backup SaveFtpFile(FtpFileInfo file, Server server)
         {
-            var worldName = file.Name;
             var backup = new Backup(server, file);
             var backupFilePath = backup.DestinationPath;
 
