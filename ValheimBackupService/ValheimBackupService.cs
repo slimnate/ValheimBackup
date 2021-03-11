@@ -17,21 +17,39 @@ namespace ValheimBackupService
     public partial class ValheimBackupService : ServiceBase
     {
         public List<ServerBackupTimer> backupTimers = new List<ServerBackupTimer>();
+        public EventLog eventLog;
 
         public ValheimBackupService()
         {
+            InitEventLog();
             InitializeComponent();
         }
 
         protected override void OnStart(string[] args)
         {
             System.Diagnostics.Debugger.Launch();
+
             DataManager.InitializeSettings(); //init settings in case the service runs before the desktop app
 
             //load in current servers and backups
             List<Server> servers = ServerDataManager.LoadData();
             List<Backup> backups = BackupDataManager.LoadData();
 
+            //Set up file watcher
+            InitFileWatcher();
+
+            //set up timers based on servers
+            InitBackupTimers(servers);
+        }
+
+        private void InitEventLog()
+        {
+            eventLog = new EventLog("Application");
+            eventLog.Source = "Valheim Backup Service";
+        }
+
+        private void InitFileWatcher()
+        {
             //set up file watcher
             fileWatcher.Path = DataManager.AppDataDirectory;
             fileWatcher.NotifyFilter = System.IO.NotifyFilters.LastWrite; //set to only notify of last write
@@ -40,9 +58,6 @@ namespace ValheimBackupService
             //fileWatcher.Created += OnFileChange;
             //fileWatcher.Deleted += OnFileChange;
             fileWatcher.EnableRaisingEvents = true;
-
-            //set up timers based on servers
-            InitBackupTimers(servers);
         }
 
         private void InitBackupTimers(List<Server> servers)
@@ -106,6 +121,9 @@ namespace ValheimBackupService
 
         private void ModalMessage(string s)
         {
+            //also write these to event log in case problem with modal. Eventually modal will go to pop-up notifications, so log there as well
+            eventLog.WriteEntry(s);
+
             MessageBox.Show(s, "ValheimBackup Service:", MessageBoxButtons.OK, MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
         }
