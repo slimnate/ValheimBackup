@@ -64,22 +64,27 @@ namespace ValheimBackup.Data
 
         public static List<Backup> BackupFtpFiles(Server server, List<FtpFileInfo> files)
         {
-            var results = new List<Backup>();
+            //read in existing backup meta
+            var backups = BackupDataManager.LoadData();
 
             foreach(FtpFileInfo file in files)
             {
                 try
                 {
+                    //save file to disk
                     var backup = SaveFtpFile(file, server);
-
-                    results.Add(backup);
+                    //add backup entry to list of existing backups
+                    backups.Add(backup);
                 } catch (Exception e)
                 {
                     //TODO: Log this exception somewhere
                 }
             }
 
-            return results;
+            //cleanup backups
+            var cleaner = new BackupDataCleaner(server, backups);
+
+            return cleaner.Clean();
         }
 
         public static FileStream CreateAndOpenFile(string path)
@@ -103,6 +108,17 @@ namespace ValheimBackup.Data
             }
 
             return backup;
+        }
+
+        public static void DeleteFile(string path)
+        {
+            try
+            {
+                File.Delete(path);
+            } catch
+            {
+                throw; //TODO: implement exception handling
+            }
         }
     }
 }

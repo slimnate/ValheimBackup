@@ -97,15 +97,13 @@ namespace ValheimBackupService
             //download file from ftp server
             var files = FtpManager.DownloadWorldFiles(server);
 
-            //Write files to disk
+            //Write downloaded world files to disk, also cleans up old files and backup entries
             var backups = DataManager.BackupFtpFiles(server, files);
 
             //save backup metadata to disk
-            BackupDataManager.AddBackups(backups);
+            BackupDataManager.SaveData(backups);
 
             ModalMessage("backup complete - " + backups.Count + " backups added");
-
-            //TODO: implement cleanup functionality, might not go here exactly
         }
 
         private void OnFileChanged(object sender, System.IO.FileSystemEventArgs e)
