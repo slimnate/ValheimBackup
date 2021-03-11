@@ -19,7 +19,7 @@ namespace ValheimBackupService
         public ServerBackupTimer(Server server)
         {
             _server = server;
-            Interval = TimePeriod.ToSeconds(server.BackupSettings.Schedule.Frequency);
+            Interval = TimePeriod.ToMilliseconds(server.BackupSettings.Schedule.Frequency);
             AutoReset = true;
         }
     }
