@@ -106,10 +106,15 @@ namespace ValheimBackup.BO
                 if (_backupTime != value)
                 {
                     _backupTime = value;
-                    NotifyPropertyChanged("DestinationPath");
+                    NotifyPropertyChanged("BackupTime");
                 }
             }
         }
+
+        /// <summary>
+        /// Empty default constructor for deserialization
+        /// </summary>
+        public Backup() { }
 
         public Backup(Server server, FtpFileInfo fileInfo)
         {
