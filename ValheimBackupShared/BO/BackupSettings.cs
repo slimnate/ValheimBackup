@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ValheimBackup.Properties;
+using ValheimBackupShared.Properties;
 
 namespace ValheimBackup.BO
 {
@@ -151,6 +151,24 @@ namespace ValheimBackup.BO
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        private static readonly string[] VALID_EXTENSIONS = new string[] { ".db", ".fwl" };
+        public bool ShouldBackup(string fileName, string extension)
+        {
+            if (WorldSelection == WorldSelection.Specific) // specific worlds enabled
+            {
+                if(!SelectedWorlds.Contains(fileName)) // not in list
+                {
+                    return false;
+                }
+            }
+            if(!VALID_EXTENSIONS.Contains(extension)) // wrong extension
+            {
+                return false;
+            }
+
+            return true; // true if not tests failed
+        } 
 
         public override string ToString()
         {

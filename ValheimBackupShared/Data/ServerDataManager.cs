@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ValheimBackup.BO;
-using ValheimBackup.Properties;
+using ValheimBackupShared.Properties;
 
 namespace ValheimBackup.Data
 {

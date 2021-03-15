@@ -17,6 +17,7 @@ namespace ValheimBackup.FTP
         private string _name;
         private string _ext;
         private string _permissions;
+        private string _contents;
         private int _size;
         private DateTime _lastModified;
         private bool _isDirectory;
@@ -39,6 +40,12 @@ namespace ValheimBackup.FTP
         public string Permissions
         {
             get => _permissions;
+        }
+
+        public string Contents
+        {
+            get => _contents;
+            set => _contents = value;
         }
 
         public DateTime LastModified
@@ -68,7 +75,8 @@ namespace ValheimBackup.FTP
                 if(SizeMB > 1)
                 {
                     return Math.Round(SizeMB, 2, MidpointRounding.AwayFromZero) + " MB";
-                } else if(SizeKB > 1)
+                }
+                else if(SizeKB > 1)
                 {
                     return Math.Round(SizeKB, 2, MidpointRounding.AwayFromZero) + " KB";
                 }

@@ -50,6 +50,7 @@
             </ListView.ItemTemplate>
         </ListView>
         <StackPanel Grid.Row="2" Style="{StaticResource FormBottomButtonBarStyle}">
+            <Button x:Name="ButtonBackupServer" Content="BackupNow" Click="ButtonBackupServer_Click"  Style="{StaticResource FormBottomButtonStyle}"/>
             <Button x:Name="ButtonRemoveServer" Content="Remove" Click="ButtonRemoveServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
             <Button x:Name="ButtonEditServer" Content="Edit" Click="ButtonEditServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
             <Button x:Name="ButtonAddServer" Content="Add Server" Click="ButtonAddServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>

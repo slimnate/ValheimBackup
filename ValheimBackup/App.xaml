@@ -4,7 +4,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:ValheimBackup"
-             xmlns:bo="clr-namespace:ValheimBackup.BO"
+             xmlns:bo="clr-namespace:ValheimBackup.BO;assembly=ValheimBackupShared"
              xmlns:converters="clr-namespace:ValheimBackup.Converters"
              StartupUri="MainWindow.xaml"
              Startup="Application_Startup"

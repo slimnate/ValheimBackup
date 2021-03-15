@@ -9,7 +9,6 @@ using System.Windows;
 using ValheimBackup.BO;
 using ValheimBackup.Data;
 using ValheimBackup.Extensions;
-using ValheimBackup.Properties;
 
 namespace ValheimBackup
 {
@@ -21,20 +20,12 @@ namespace ValheimBackup
         public static BetterObservableCollection<Server> Servers { get; set; }
         public static BetterObservableCollection<Backup> Backups { get; set; }
 
-        private static string DefaultAppDataDirectory
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ValheimBackup");
-            }
-        }
-
         public App() { }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             //init application settings
-            InitializeSettings();
+            DataManager.InitializeSettings();
 
             //load in server data if it exits
             InitializeAppData();
@@ -44,17 +35,6 @@ namespace ValheimBackup
         {
             //save data before exiting
             PersistAppData();
-        }
-
-        private void InitializeSettings()
-        {
-            if(Settings.Default.AppDataDirectory == "" || Settings.Default.DefaultBackupDirectory == "")
-            {
-                //default settings if they aren't setup
-                Settings.Default.AppDataDirectory = DefaultAppDataDirectory;
-                Settings.Default.DefaultBackupDirectory = Path.Combine(DefaultAppDataDirectory, "backups");
-                Settings.Default.Save();
-            }
         }
 
         private void InitializeAppData()
@@ -80,9 +60,7 @@ namespace ValheimBackup
 
             BackupDataManager.SaveData(Backups.ToList());
 
-            //save user settings
-            //https://docs.microsoft.com/en-us/visualstudio/ide/managing-application-settings-dotnet?view=vs-2019
-            Settings.Default.Save();
+            DataManager.SaveSettings();
         }
     }
 }
