@@ -90,6 +90,8 @@ namespace ValheimBackup
             }
 
             //save files to backup location
+            BackupDataManager.SaveData(backups);
+
             return;
         }
     }

@@ -49,6 +49,8 @@
     <Compile Include="BO\FtpConnectionInfo.cs" />
     <Compile Include="BO\Server.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Data\BackupBuilder.cs" />
+    <Compile Include="Data\BackupDataCleaner.cs" />
     <Compile Include="Data\BackupDataManager.cs" />
     <Compile Include="Data\DataManager.cs" />
     <Compile Include="Data\ServerDataManager.cs" />
@@ -60,6 +62,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Utils\TimePeriod.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

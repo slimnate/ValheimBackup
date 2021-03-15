@@ -43,7 +43,7 @@ namespace ValheimBackup.Data
 
             foreach(var group in groups)
             {
-                var list = group.Value;
+                var list = group.Value as List<Backup>;
 
                 // # of files to delete to ensure that the list has exactly 'maxCopies' items.
                 // we do this calculation instead of just deleting the one oldest file, because
@@ -79,7 +79,7 @@ namespace ValheimBackup.Data
 
         private void Remove(Backup toRemove)
         {
-            DataManager.DeleteFile(toRemove.DestinationPath);
+            DataManager.DeleteFilesFor(toRemove);
             backups.Remove(toRemove);
         }
 
@@ -100,7 +100,7 @@ namespace ValheimBackup.Data
                     res.Add(worldName, new List<Backup>());
                 }
                 //add backup to appropriate list
-                res[worldName].Append(backup);
+                ((List<Backup>)res[worldName]).Add(backup);
             }
             return res;
         }

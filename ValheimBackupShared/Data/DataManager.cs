@@ -62,31 +62,6 @@ namespace ValheimBackup.Data
             Settings.Default.Save();
         }
 
-        public static List<Backup> BackupFtpFiles(Server server, List<FtpFileInfo> files)
-        {
-            //read in existing backup meta
-            var backups = BackupDataManager.LoadData();
-
-            foreach(FtpFileInfo file in files)
-            {
-                try
-                {
-                    //save file to disk
-                    var backup = SaveFtpFile(file, server);
-                    //add backup entry to list of existing backups
-                    backups.Add(backup);
-                } catch (Exception e)
-                {
-                    //TODO: Log this exception somewhere
-                }
-            }
-
-            //cleanup backups
-            var cleaner = new BackupDataCleaner(server, backups);
-
-            return cleaner.Clean();
-        }
-
         public static FileStream CreateAndOpenFile(string path)
         {
             string directory = Path.GetDirectoryName(path);
@@ -94,30 +69,50 @@ namespace ValheimBackup.Data
             return File.Create(path);
         }
 
-        public static Backup SaveFtpFile(FtpFileInfo file, Server server)
+        public static List<Backup> BackupFtpFiles(Server server, List<FtpFileInfo> files)
         {
-            var backup = new Backup(server, file);
-            var backupFilePath = backup.DestinationPath;
+            System.Diagnostics.Debugger.Launch();
+            //read in existing backup meta
+            var backups = BackupDataManager.LoadData();
 
-            using (var stream = CreateAndOpenFile(backupFilePath))
+            var builder = new BackupBuilder(server);
+
+            foreach(FtpFileInfo file in files)
+            {
+                builder.AddFile(file, SaveFtpFile);
+            }
+
+            backups = builder.MergeWith(backups);
+
+            //cleanup backups
+            var cleaner = new BackupDataCleaner(server, backups);
+
+            return cleaner.Clean();
+        }
+
+        public static void SaveFtpFile(FtpFileInfo file, string destination)
+        {
+            using (var stream = CreateAndOpenFile(destination))
             {
                 using (StreamWriter writer = new StreamWriter(stream))
                 {
                     writer.Write(file.Contents);
                 }
             }
-
-            return backup;
         }
 
-        public static void DeleteFile(string path)
+        public static void DeleteFilesFor(Backup backup)
         {
-            try
+            foreach(BackupFilePair file in backup.Files)
             {
-                File.Delete(path);
-            } catch
-            {
-                throw; //TODO: implement exception handling
+                try
+                {
+                    File.Delete(file.DestinationPath);
+                }
+                catch
+                {
+                    throw;
+                }
             }
         }
     }

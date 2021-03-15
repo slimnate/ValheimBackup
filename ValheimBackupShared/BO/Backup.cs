@@ -16,9 +16,8 @@ namespace ValheimBackup.BO
         private long _id = -1;
         private long _serverId;
         private string _worldName;
-        private string _sourcePath;
-        private string _destinationPath;
         private DateTime _backupTime;
+        private List<BackupFilePair> _files;
 
         [JsonProperty]
         public long Id
@@ -70,6 +69,78 @@ namespace ValheimBackup.BO
         }
 
         [JsonProperty]
+        public DateTime BackupTime
+        {
+            get => _backupTime;
+            set
+            {
+                if (_backupTime != value)
+                {
+                    _backupTime = value;
+                    NotifyPropertyChanged("BackupTime");
+                }
+            }
+        }
+
+        [JsonProperty]
+        public List<BackupFilePair> Files
+        {
+            get => _files;
+            set
+            {
+                if(_files != value)
+                {
+                    _files = value;
+                    NotifyPropertyChanged("Files");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Empty default constructor for deserialization
+        /// </summary>
+        public Backup() { }
+
+        public Backup(long serverId, string world, DateTime time)
+        {
+            _serverId = serverId;
+            _worldName = world;
+            _backupTime = time;
+            _files = new List<BackupFilePair>();
+        }
+
+        public void AddFile(BackupFilePair pair)
+        {
+            _files.Add(pair);
+            NotifyPropertyChanged("Files");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public static string TimeHash(DateTime dt)
+        {
+            return "-" + dt.ToString("yyyyMMddHHmmss");
+        }
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class BackupFilePair : INotifyPropertyChanged
+    {
+        private string _sourcePath;
+        private string _destinationPath;
+        private string _name;
+        private string _timeHash;
+        private string _extension;
+
+        [JsonProperty]
         public string SourcePath
         {
             get => _sourcePath;
@@ -97,39 +168,12 @@ namespace ValheimBackup.BO
             }
         }
 
-        [JsonProperty]
-        public DateTime BackupTime
+        public BackupFilePair() { }
+
+        public BackupFilePair(string source, string destination, string name, string extension, string timeHash)
         {
-            get => _backupTime;
-            set
-            {
-                if (_backupTime != value)
-                {
-                    _backupTime = value;
-                    NotifyPropertyChanged("BackupTime");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Empty default constructor for deserialization
-        /// </summary>
-        public Backup() { }
-
-        public Backup(Server server, FtpFileInfo fileInfo)
-        {
-            _serverId = server.Id;
-            _worldName = fileInfo.Name;
-            _sourcePath = Path.Combine(server.BackupSettings.WorldDirectory, fileInfo.FullName);
-            _backupTime = DateTime.Now;
-
-            var backupFileName = fileInfo.Name + TimeHash(_backupTime) + fileInfo.Extension;
-            _destinationPath = Path.Combine(server.BackupSettings.BackupDirectory, backupFileName);
-        }
-
-        public static string TimeHash(DateTime dt)
-        {
-            return "-" + dt.ToString("yyyyMMddHHmmss");
+            _sourcePath = source;
+            _destinationPath = destination;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
