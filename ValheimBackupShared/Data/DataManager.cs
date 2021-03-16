@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ValheimBackup.BO;
 using ValheimBackup.FTP;
 using ValheimBackupShared.Properties;
