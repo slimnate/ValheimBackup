@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ValheimBackup.BO;
 
 namespace ValheimBackup.Utils
 {
+    /// <summary>
+    /// Utility class for calculating/converting time periods from differing
+    /// units.
+    /// </summary>
     public static class TimePeriod
     {
         private static readonly int SECONDS = 1000;
@@ -15,11 +15,27 @@ namespace ValheimBackup.Utils
         private static readonly int DAYS = HOURS * 24;
         private static readonly int WEEKS = DAYS * 7;
 
+        /// <summary>
+        /// Convert a <see cref="BackupFrequency"/> object to it's period value
+        /// in milliseconds.
+        /// </summary>
+        /// <param name="frequency">backup frequency to convert</param>
+        /// <returns>the frequency's period in milliseconds.</returns>
         public static double ToMilliseconds(BackupFrequency frequency)
         {
             return frequency.Amount * Multiplier(frequency.Period);
         }
 
+        /// <summary>
+        /// Convert a <see cref="CleanupFrequency"/> object to it's period value
+        /// in milliseconds.
+        /// <br/><br/>
+        /// Throws an <see cref="ArgumentException"/> if the cleanup period
+        /// is <see cref="CleanupPeriod.Copies"/>
+        /// </summary>
+        /// <param name="frequency">cleanup frequency to convert</param>
+        /// <returns>the frequency's period in milliseconds.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static double ToMilliseconds(CleanupFrequency frequency)
         {
             if (frequency.Period == CleanupPeriod.Copies)
@@ -29,6 +45,21 @@ namespace ValheimBackup.Utils
             return frequency.Amount * Multiplier(frequency.Period);
         }
 
+        /// <summary>
+        /// Calculates a <see cref="DateTime"/> object by subtracting the
+        /// supplied <see cref="CleanupFrequency"/>'s time from the current time.
+        /// Used to determine when files should be cleaned up.
+        /// <br/><br/>
+        /// Throws an <see cref="Exception"/> if the CleanupFrequency is not
+        /// valid (because <see cref="CleanupPeriod.Copies"/> is selected, or
+        /// some other invalid value was supplied.)
+        /// </summary>
+        /// <param name="frequency">frequency to calculate from</param>
+        /// <returns>
+        /// The date/time that was exactly one <paramref name="frequency"/>
+        /// period before the current date/time.
+        /// </returns>
+        /// <exception cref="Exception"></exception>
         public static DateTime TimeAgo(CleanupFrequency frequency)
         {
             TimeSpan span = TimeSpan.FromSeconds(0);
@@ -53,6 +84,16 @@ namespace ValheimBackup.Utils
             return DateTime.Now.Subtract(span);
         }
 
+        /// <summary>
+        /// Get's the numeric multiplier needed to convert a frequency's amount
+        /// from the specified <paramref name="period"/> to milliseconds.
+        /// <br/><br/>
+        /// Throws an <see cref="Exception"/> if the <paramref name="period"/>
+        /// is not valid.
+        /// </summary>
+        /// <param name="period">period to get multiplier for</param>
+        /// <returns>amount multiplier for period</returns>
+        /// <exception cref="Exception"></exception>
         public static double Multiplier(BackupPeriod period)
         {
             switch (period)
@@ -70,6 +111,17 @@ namespace ValheimBackup.Utils
             }
         }
 
+        /// <summary>
+        /// Get's the numeric multiplier needed to convert a frequency's amount
+        /// from the specified <paramref name="period"/> to milliseconds.
+        /// <br/><br/>
+        /// Throws an <see cref="Exception"/> if the <paramref name="period"/>
+        /// is not valid (because <see cref="CleanupPeriod.Copies"/> is selected, or
+        /// some other invalid value was supplied.)
+        /// </summary>
+        /// <param name="period">period to get multiplier for</param>
+        /// <returns>amount multiplier for period</returns>
+        /// <exception cref="Exception"></exception>
         public static double Multiplier(CleanupPeriod period)
         {
             switch (period)

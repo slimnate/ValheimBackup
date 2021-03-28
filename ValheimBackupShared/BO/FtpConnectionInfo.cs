@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ValheimBackup.BO
 {
+    /// <summary>
+    /// Represents connection details for a Server's FTP connection
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class FtpConnectionInfo : INotifyPropertyChanged
     {
@@ -16,6 +14,9 @@ namespace ValheimBackup.BO
         private string _username;
         private string _password;
 
+        /// <summary>
+        /// Host address of the server
+        /// </summary>
         [JsonProperty]
         public string Host
         {
@@ -30,6 +31,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Port to connect to.
+        /// </summary>
         [JsonProperty]
         public string Port
         {
@@ -44,6 +48,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Username credential
+        /// </summary>
         [JsonProperty]
         public string Username
         {
@@ -58,6 +65,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Password credential
+        /// </summary>
         [JsonProperty]
         public string Password
         {
@@ -72,6 +82,10 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Full connection URI
+        /// Format: "{Host}:{Port}"
+        /// </summary>
         public string FullUri
         {
             get
@@ -80,6 +94,18 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Empty default constructor for JSON deserialization
+        /// </summary>
+        public FtpConnectionInfo() { }
+
+        /// <summary>
+        /// Create a new FtpConnectionInfo with the specified details.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
         public FtpConnectionInfo(string host, string port, string username, string password)
         {
             this.Host = host;
@@ -87,6 +113,17 @@ namespace ValheimBackup.BO
             this.Username = username;
             this.Password = password;
         }
+
+        /// <summary>
+        /// Override to string to return host and port
+        /// </summary>
+        /// <returns>"{Host}:{Port}"</returns>
+        public override string ToString()
+        {
+            return Host + ":" + Port;
+        }
+
+        #region INotifyPropertychanged
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -98,9 +135,6 @@ namespace ValheimBackup.BO
             }
         }
 
-        public override string ToString()
-        {
-            return Host + ":" + Port;
-        }
+        #endregion
     }
 }

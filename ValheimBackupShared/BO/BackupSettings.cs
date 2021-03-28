@@ -2,30 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ValheimBackupShared.Properties;
 
 namespace ValheimBackup.BO
 {
-    /// <summary>
-    /// Represents a time period for backups
-    /// </summary>
-    public enum BackupPeriod : int
-    {
-        Minutes, Hours, Days, Weeks
-    }
-
-    /// <summary>
-    /// Represents a time period for cleanups
-    /// </summary>
-    public enum CleanupPeriod : int
-    {
-        Minutes, Hours, Days, Weeks, Copies
-    }
-
     /// <summary>
     /// All or only specific worlds
     /// </summary>
@@ -35,30 +16,20 @@ namespace ValheimBackup.BO
     }
 
     /// <summary>
-    /// Represents all the information about how and when to backup worlds for a specific server.
+    /// Represents all the information about how, when, where, and what worlds
+    /// to backup for a specific server.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class BackupSettings : INotifyPropertyChanged
     {
-        private DateTime _lastBackup;
         private string _worldDirectory;
         private string _backupDirectory;
         private WorldSelection _worldSelection;
         private List<string> _selectedWorlds;
 
-        public DateTime LastBackup
-        {
-            get => _lastBackup;
-            set
-            {
-                if(_lastBackup != value)
-                {
-                    _lastBackup = value;
-                    NotifyPropertyChanged("LastBackup");
-                }
-            }
-        }
-
+        /// <summary>
+        /// The remote directory on this server containing the world files
+        /// </summary>
         [JsonProperty]
         public string WorldDirectory
         {
@@ -73,6 +44,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// The local directory to save backup files in
+        /// </summary>
         [JsonProperty]
         public string BackupDirectory
         {
@@ -87,6 +61,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Determines whether to backup all worlds or specific worlds only
+        /// </summary>
         [JsonProperty]
         public WorldSelection WorldSelection
         {
@@ -101,6 +78,11 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Contains a list of the worlds that should be backed up.
+        /// This property will be ignored unless the user has specifically
+        /// selected to only backup specific worlds.
+        /// </summary>
         [JsonProperty]
         public List<string> SelectedWorlds
         {
@@ -115,12 +97,27 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// The schedule for performing remote file backups
+        /// </summary>
         [JsonProperty]
         public BackupSchedule Schedule { get; set; }
 
+        /// <summary>
+        /// The schedule for performing backup file cleanup
+        /// </summary>
         [JsonProperty]
         public CleanupFrequency CleanupSchedule { get; set; }
 
+        /// <summary>
+        /// Returns a new instance of Backup settings with default properties.
+        /// Defaults:
+        /// Backup schedule: every 30 minutes
+        /// World directory: /save/worlds
+        /// Backup directory: read from application settings.
+        /// World selection: All
+        /// Cleanup schedule: Every 10 copies
+        /// </summary>
         public static BackupSettings Default
         {
             get
@@ -137,103 +134,53 @@ namespace ValheimBackup.BO
             }
         }
 
-        public BackupSettings()
-        {
-
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
+        /// <summary>
+        /// A list of file extensions that are valid for world servers
+        /// </summary>
         private static readonly string[] VALID_EXTENSIONS = new string[] { ".db", ".fwl" };
+
+        /// <summary>
+        /// Empty default constructor for JSON deserialization
+        /// </summary>
+        public BackupSettings()  { }
+
+        /// <summary>
+        /// Determines whether a file should be backed up, based on it's name
+        /// and extension.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="extension"></param>
+        /// <returns>True if the file should be backed up, false otherwise.</returns>
         public bool ShouldBackup(string fileName, string extension)
         {
-            if (WorldSelection == WorldSelection.Specific) // specific worlds enabled
+            if (WorldSelection == WorldSelection.Specific)
             {
-                if(!SelectedWorlds.Contains(fileName)) // not in list
+                if (!SelectedWorlds.Contains(fileName))
                 {
+                    //specific worlds enabled, and not in selected worlds.
                     return false;
                 }
             }
-            if(!VALID_EXTENSIONS.Contains(extension)) // wrong extension
+            if (!VALID_EXTENSIONS.Contains(extension))
             {
+                // wrong extension
                 return false;
             }
 
-            return true; // true if not tests failed
-        } 
+            // no checks failed, return true
+            return true;
+        }
 
+        /// <summary>
+        /// Overrides ToString to provide human readable representation of settings.
+        /// </summary>
+        /// <returns>"backing up {WorldSelection} worlds {Schedule}"</returns>
         public override string ToString()
         {
             return "backing up " + WorldSelection.ToString() + " worlds " + Schedule.ToString();
         }
 
-        //TODO: add naming convention for backup files
-    }
-
-    /// <summary>
-    /// Represents a schedule for backing up world files.
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
-    public class BackupSchedule : INotifyPropertyChanged
-    {
-        private DateTime? _startDate;
-        private DateTime? _endDate;
-
-
-        [JsonProperty]
-        public DateTime? StartDate
-        {
-            get => _startDate;
-            set
-            {
-                if (_startDate != value)
-                {
-                    _startDate = value;
-                    NotifyPropertyChanged("StartDate");
-                }
-            }
-        }
-
-
-        [JsonProperty]
-        public DateTime? EndDate
-        {
-            get => _endDate;
-            set
-            {
-                if (_endDate != value)
-                {
-                    _endDate = value;
-                    NotifyPropertyChanged("EndDate");
-                }
-            }
-        }
-
-        [JsonProperty]
-        public BackupFrequency Frequency { get; set; }
-
-        public BackupSchedule() { }
-
-        public BackupSchedule(BackupFrequency frequency)
-            : this(frequency, DateTime.Now) { }
-
-        public BackupSchedule(BackupFrequency frequency, DateTime startDate)
-            : this(frequency, startDate, DateTime.Now.AddDays(365)) { }
-
-        public BackupSchedule(BackupFrequency frequency, DateTime startDate, DateTime endDate)
-        {
-            this.StartDate = startDate;
-            this.EndDate = endDate;
-            this.Frequency = frequency;
-        }
+        #region INotifyPropertychanged
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -245,119 +192,6 @@ namespace ValheimBackup.BO
             }
         }
 
-        public override string ToString()
-        {
-            return "every " + Frequency.Amount + " " + Frequency.Period.ToString() + " starting on " + StartDate.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Represents the frequency of occurance for a backup event in the form of "every {amount} {unit}".
-    /// eg. every 2 days, every 30 minutes, every 1 week
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
-    public class BackupFrequency : INotifyPropertyChanged
-    {
-        private int _amount;
-        private BackupPeriod _period;
-
-        [JsonProperty]
-        public int Amount
-        {
-            get => _amount;
-            set
-            {
-                if (_amount != value)
-                {
-                    _amount = value;
-                    NotifyPropertyChanged("Amount");
-                }
-            }
-        }
-
-        [JsonProperty]
-        public BackupPeriod Period
-        {
-            get => _period;
-            set
-            {
-                if (_period != value)
-                {
-                    _period = value;
-                    NotifyPropertyChanged("Period");
-                }
-            }
-        }
-
-        public BackupFrequency(int amount, BackupPeriod period)
-        {
-            this.Amount = amount;
-            this.Period = period;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Represents the frequency of occurance for cleanup events in the form of "every {amount} {unit}".
-    /// eg. every 2 days, every 30 minutes, every 10 copies
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
-    public class CleanupFrequency : INotifyPropertyChanged
-    {
-        private int _amount;
-        private CleanupPeriod _period;
-
-        [JsonProperty]
-        public int Amount
-        {
-            get => _amount;
-            set
-            {
-                if (_amount != value)
-                {
-                    _amount = value;
-                    NotifyPropertyChanged("Amount");
-                }
-            }
-        }
-
-        [JsonProperty]
-        public CleanupPeriod Period
-        {
-            get => _period;
-            set
-            {
-                if (_period != value)
-                {
-                    _period = value;
-                    NotifyPropertyChanged("Period");
-                }
-            }
-        }
-
-        public CleanupFrequency(int amount, CleanupPeriod period)
-        {
-            this.Amount = amount;
-            this.Period = period;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        #endregion
     }
 }

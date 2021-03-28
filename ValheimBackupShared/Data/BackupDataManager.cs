@@ -2,16 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ValheimBackup.BO;
 using ValheimBackupShared.Properties;
 
 namespace ValheimBackup.Data
 {
+    /// <summary>
+    /// Static class which provides methods for managing Backup data (the JSON list of saved backups)
+    /// </summary>
     public class BackupDataManager
     {
+        /// <summary>
+        /// File path for the backups file, computed from application settings.
+        /// </summary>
         private static string BackupsFilePath
         {
             get
@@ -20,6 +23,9 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Creates the backups file if it does not yet exist on disk.
+        /// </summary>
         private static void createFileIfNotExist()
         {
             if (!Directory.Exists(Settings.Default.AppDataDirectory))
@@ -36,6 +42,10 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Deserialize the list of backups from the local disk.
+        /// </summary>
+        /// <returns>List of backup objects that were read from the file.</returns>
         public static List<Backup> LoadData()
         {
             try
@@ -63,6 +73,13 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Serializes the list of local backups to the disk.<br />
+        /// <b>Does NOT append to existing file, but overwrites entirely!</b>
+        /// Make sure that you supply the entire list of backups to this method,
+        /// not just a subset to append.
+        /// </summary>
+        /// <param name="backups">List of backups to be saved</param>
         public static void SaveData(List<Backup> backups)
         {
             try
@@ -81,6 +98,11 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Logs a message to the console with some additional info about the message source.
+        /// </summary>
+        /// <param name="methodName">name of logging method</param>
+        /// <param name="message">message to log</param>
         private static void Log(string methodName, string message)
         {
             Console.WriteLine("[BackupDataManager." + methodName + "]: " + message);
