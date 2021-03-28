@@ -7,8 +7,14 @@ using ValheimBackupShared.Properties;
 
 namespace ValheimBackup.Data
 {
+    /// <summary>
+    /// Static class which provides methods for managing Server data (the JSON list of saved servers)
+    /// </summary>
     public class ServerDataManager
     {
+        /// <summary>
+        /// File path to the servers file, computed from application settings
+        /// </summary>
         private static string ServersFilePath
         {
             get
@@ -17,6 +23,10 @@ namespace ValheimBackup.Data
             }
         }
 
+
+        /// <summary>
+        /// Creates the servers file if it does not yet exist on disk.
+        /// </summary>
         private static void createFileIfNotExist()
         {
             if (!Directory.Exists(Settings.Default.AppDataDirectory))
@@ -26,12 +36,17 @@ namespace ValheimBackup.Data
 
             if (!File.Exists(ServersFilePath))
             {
-                using(File.Create(ServersFilePath)) {
-                    //empy using block to ensure stream closes
+                using(File.Create(ServersFilePath))
+                {
+                    // empty using block to ensure stream closes
                 }
             }
         }
 
+        /// <summary>
+        /// Deserialize the list of servers from the local disk.
+        /// </summary>
+        /// <returns>List of server objects that were read from the file.</returns>
         public static List<Server> LoadData()
         {
             try
@@ -59,6 +74,13 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Serializes the list of local servers to the disk.<br />
+        /// <b>Does NOT append to existing file, but overwrites entirely!</b>
+        /// Make sure that you supply the entire list of servers to this method,
+        /// not just a subset to append.
+        /// </summary>
+        /// <param name="servers">List of backups to be saved</param>
         public static void SaveData(List<Server> servers)
         {
             try
@@ -76,6 +98,11 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Logs a message to the console with some additional info about the message source.
+        /// </summary>
+        /// <param name="methodName">name of logging method</param>
+        /// <param name="message">message to log</param>
         private static void Log(string methodName, string message)
         {
             Console.WriteLine("[ServerDataManager." + methodName + "]: " + message);

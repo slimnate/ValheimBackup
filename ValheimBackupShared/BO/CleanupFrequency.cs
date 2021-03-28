@@ -4,6 +4,15 @@ using System.ComponentModel;
 namespace ValheimBackup.BO
 {
     /// <summary>
+    /// Represents a time period for cleanups
+    /// </summary>
+    public enum CleanupPeriod : int
+    {
+        Minutes, Hours, Days, Weeks, Copies
+    }
+
+
+    /// <summary>
     /// Represents the frequency of occurance for cleanup events in the form of "every {amount} {unit}".
     /// eg. every 2 days, every 30 minutes, every 10 copies
     /// </summary>
@@ -13,6 +22,9 @@ namespace ValheimBackup.BO
         private int _amount;
         private CleanupPeriod _period;
 
+        /// <summary>
+        /// Frequency amount (x number of units)
+        /// </summary>
         [JsonProperty]
         public int Amount
         {
@@ -27,6 +39,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Frequency period (units)
+        /// </summary>
         [JsonProperty]
         public CleanupPeriod Period
         {
@@ -41,11 +56,18 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Empty default constructor for JSON deserialization
+        /// </summary>
+        public CleanupFrequency() { }
+
         public CleanupFrequency(int amount, CleanupPeriod period)
         {
             this.Amount = amount;
             this.Period = period;
         }
+
+        #region INotifyPropertychanged
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -56,5 +78,7 @@ namespace ValheimBackup.BO
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #endregion
     }
 }

@@ -6,12 +6,21 @@ using ValheimBackup.Utils;
 
 namespace ValheimBackup.Data
 {
+    /// <summary>
+    /// This class takes care of cleaning up old backup files for a
+    /// specific server
+    /// </summary>
     public class BackupDataCleaner
     {
         private long serverId;
         private CleanupFrequency frequency;
         private List<Backup> backups;
 
+        /// <summary>
+        /// Create a new BackupDataCleaner with specified params
+        /// </summary>
+        /// <param name="server">The server that is currently being processed.</param>
+        /// <param name="backups">The list of backups that currently exist for that server.</param>
         public BackupDataCleaner(Server server, List<Backup> backups)
         {
             this.serverId = server.Id;
@@ -19,6 +28,12 @@ namespace ValheimBackup.Data
             this.backups = backups;
         }
 
+        /// <summary>
+        /// The method that will be used by the consumer of this class
+        /// to perform the cleanup process. Determines what cleanup settings
+        /// the user has selected, and performs the correct cleanup accordingly
+        /// </summary>
+        /// <returns>List of Backups, less those that were removed.</returns>
         public List<Backup> Clean()
         {
             //if copies, sort by world name and clean by copy count, otherwise clean by age.
@@ -33,6 +48,13 @@ namespace ValheimBackup.Data
             return backups;
         }
 
+        /// <summary>
+        /// Internal method that will clean up backups based on the number of copies per world.
+        /// <br/><br/>
+        /// Filters the backups to only this servers, then groups by world name.
+        /// Based on the number of copies found, and the specified copy limit,
+        /// determine how many backups need to be deleted, and delete accordingly
+        /// </summary>
         private void CleanByWorldCopyCount()
         {
             int maxCopies = frequency.Amount;
@@ -60,6 +82,14 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Internal method that will clean up files by their age.
+        /// <br/><br/>
+        /// Filters the files for only this server, and then determines
+        /// the max age of any file for this server based on the current
+        /// time and the cleanup frequency specified. Delete all backups
+        /// that are older than this.
+        /// </summary>
         private void CleanByAge()
         {
             var filtered = FilterByServer(backups);
@@ -75,17 +105,36 @@ namespace ValheimBackup.Data
             }
         }
 
+        /// <summary>
+        /// Deletes files for a specified backup and removes it from the
+        /// internal list of backups.
+        /// <br/><br/>
+        /// Uses the <code>DataManager.DeleteFilesFor(backup)</code> method
+        /// to remove the files from disk.
+        /// </summary>
+        /// <param name="toRemove">Backup to remove</param>
         private void Remove(Backup toRemove)
         {
             DataManager.DeleteFilesFor(toRemove);
             backups.Remove(toRemove);
         }
 
+        /// <summary>
+        /// Filters a list of Backups by the server Id of each backup.
+        /// Matches based on the internal server id property.
+        /// </summary>
+        /// <param name="backups">List to filter</param>
+        /// <returns>List of filtered backups</returns>
         private IEnumerable<Backup> FilterByServer(IEnumerable<Backup> backups)
         {
             return backups.Where(b => b.ServerId == serverId);
         }
 
+        /// <summary>
+        /// Groups each backup in a list to their own list based on world name.
+        /// </summary>
+        /// <param name="backups">List of backups to group</param>
+        /// <returns>Dictionary of lists, with key being the world name.</returns>
         private Dictionary<string, IEnumerable<Backup>> GroupByWorldName(IEnumerable<Backup> backups)
         {
             var res = new Dictionary<string, IEnumerable<Backup>>();
@@ -103,6 +152,12 @@ namespace ValheimBackup.Data
             return res;
         }
 
+        /// <summary>
+        /// Finds the oldest backup in the specified list, based on the
+        /// <code>BackupTime</code> property of each.
+        /// </summary>
+        /// <param name="backups">List of backups to search</param>
+        /// <returns>The oldest backup found in the list.</returns>
         private Backup GetOldest(IEnumerable<Backup> backups)
         {
             Backup res = null;
@@ -110,6 +165,7 @@ namespace ValheimBackup.Data
             {
                 if (res == null)
                 {
+                    //first time through loop, initialize res so we have something to compare to
                     res = current;
                 }
                 if(DateTime.Compare(current.BackupTime, res.BackupTime) < 0)

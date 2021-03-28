@@ -8,6 +8,11 @@ using ValheimBackup.BO;
 
 namespace ValheimBackup.FTP
 {
+    /// <summary>
+    /// This class provides static methods for interacting with a remote FTP
+    /// server, including connection testing, making requests, and retrieving
+    /// responses.
+    /// </summary>
     public class FtpManager
     {
         private const string LIST = WebRequestMethods.Ftp.ListDirectoryDetails;
@@ -15,12 +20,18 @@ namespace ValheimBackup.FTP
         private const string UPLOAD = WebRequestMethods.Ftp.UploadFile;
 
         /// <summary>
-        /// 
+        /// Create a new FtpWebRequest with the specified connection details,
+        /// path, and method, while handling exceptions that may occur by
+        /// wrapping them in an FtpRequestException with additional info before
+        /// re-throwing them.
+        /// <br />
+        /// For valid <paramref name="method"/> strings, use methods in <see cref="WebRequestMethods.Ftp"/>
         /// </summary>
-        /// <param name="conn"></param>
-        /// <param name="path"></param>
-        /// <param name="method"></param>
-        /// <returns>FtpWebRequest - request object for specified options.</returns>
+        /// <param name="conn">FtpConnectionInfo object, representing connection details</param>
+        /// <param name="path">The path of the request (ex: /path/to/request)</param>
+        /// <param name="method">The request method </param>
+        /// <param name="timeout">(optional) timeout in milliseconds - default: 5000</param>
+        /// <returns><see cref="FtpWebRequest"/> - request object for specified options.</returns>
         /// <exception cref="FtpRequestException">There was a problem with creating or configuring the request.</exception>
         private static FtpWebRequest Request(FtpConnectionInfo conn, string path, string method, int timeout=5000)
         {
@@ -56,10 +67,15 @@ namespace ValheimBackup.FTP
         }
 
         /// <summary>
-        /// Try a getting a response and wraps exceptions with abstracted custom types.
+        /// Try a getting a response and wraps any exceptions with abstracted custom types.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request">request object to get a response for</param>
+        /// <returns><see cref="FtpWebResponse"/> the response, if no exceptions occurred.</returns>
+        /// <exception cref="FtpResponseException">
+        /// An abstraction layer over <see cref="WebException"/> and
+        /// <see cref="InvalidOperationException"/> that may be thrown when
+        /// attempting to get the response.
+        /// </exception>
         public static FtpWebResponse TryResponse(FtpWebRequest request)
         {
             FtpWebResponse response = null;
@@ -91,7 +107,7 @@ namespace ValheimBackup.FTP
         /// Performs a test of the FTP connection details provided, returning the
         /// server welcome message if succesful, otherwise throwing an exception.
         /// </summary>
-        /// <param name="conn">FtpConnectionInfo - connection info to test</param>
+        /// <param name="conn">connection info to test</param>
         /// <returns>Server welcome message</returns>
         /// <exception cref="FtpRequestException">Problem with request.</exception>
         /// <exception cref="FtpResponseException">Problem with response</exception>
@@ -109,11 +125,21 @@ namespace ValheimBackup.FTP
         }
 
         /// <summary>
-        /// 
+        /// Get's a list of <see cref="FtpFileInfo"/> objects representing all the
+        /// files in the provided path (<paramref name="worldPath"/>)
         /// </summary>
-        /// <param name="conn"></param>
-        /// <param name="worldPath"></param>
-        /// <returns></returns>
+        /// <param name="conn">connection details</param>
+        /// <param name="worldPath">path to list contents of (normalized automatically)</param>
+        /// <returns>
+        /// List of <see cref="FtpFileInfo"/> objects representing every file
+        /// and directory inside the <paramref name="worldPath"/> directory.
+        /// </returns>
+        /// <exception cref="FtpException">
+        /// If there was an error with the <paramref name="worldPath"/>
+        /// parameter, or the 150 Opening data status code is not returned
+        /// upon intial response from te server.</exception>
+        /// <exception cref="FtpRequestException">If there was a problem with the request.</exception>
+        /// <exception cref="FtpResponseException">If there was a problem with the response.</exception>
         public static List<FtpFileInfo> ListFiles(FtpConnectionInfo conn, string worldPath)
         {
             try
@@ -158,9 +184,22 @@ namespace ValheimBackup.FTP
             }
 
             //throw exception if we don't get the 150 Opening data status code
-            throw new Exception("not connected");
+            throw new FtpException("not connected");
         }
 
+        /// <summary>
+        /// Utilizes the internal <see cref="ListFiles(FtpConnectionInfo, string)"/>
+        /// and <see cref="DownloadFile(FtpConnectionInfo, string)"/> methods
+        /// to find and automatically download all world files associated
+        /// with the provided <see cref="Server"/> object that are matched by
+        /// the backup criteria set in the servers backup config.
+        /// </summary>
+        /// <param name="server">The server to download files for</param>
+        /// <returns>A list of <see cref="FtpFileInfo"/> objects, each including
+        /// the files raw contents as well.</returns>
+        /// <exception cref="FtpException"></exception>
+        /// <exception cref="FtpRequestException"></exception>
+        /// <exception cref="FtpResponseException"></exception>
         public static List<FtpFileInfo> DownloadWorldFiles(Server server)
         {
             //variable definitions
@@ -193,6 +232,15 @@ namespace ValheimBackup.FTP
             return files;
         }
 
+        /// <summary>
+        /// Downloads the contents of the specified file path from the
+        /// specified FTP server.
+        /// </summary>
+        /// <param name="conn">server connection info</param>
+        /// <param name="path">file path to download</param>
+        /// <returns>A string containing the files raw contents</returns>
+        /// <exception cref="FtpRequestException"></exception>
+        /// <exception cref="FtpResponseException"></exception>
         public static string DownloadFile(FtpConnectionInfo conn, string path)
         {
             var request = Request(conn, path, DOWNLOAD);
@@ -219,70 +267,5 @@ namespace ValheimBackup.FTP
             throw new FtpResponseException("Unable to download file (incorrect status code): " + path);
         }
 
-    }
-
-    public class FtpException : Exception
-    {
-        public FtpException() : base() { }
-
-        public FtpException(string message) : base(message) { }
-
-        public FtpException(string message, Exception innerException) : base(message, innerException) { }
-    }
-
-    public class FtpRequestException : FtpException
-    {
-        public FtpWebRequest Request { get; set; }
-
-        public FtpRequestException() : base() { }
-
-        public FtpRequestException(string message) : base(message) { }
-
-        public FtpRequestException(string message, Exception innerException) : base(message, innerException) { }
-
-        public FtpRequestException(string message, FtpWebRequest request, Exception innerException)
-            : base(message, innerException)
-        {
-            Request = request;
-        }
-
-        public override string ToString()
-        {
-            return "FtpRequestException: " + Message;
-        }
-    }
-
-    public class FtpResponseException : FtpException
-    {
-        public FtpWebResponse Response { get; set; }
-
-        public FtpResponseException() : base() { }
-
-        public FtpResponseException(string message) : base(message) { }
-
-        public FtpResponseException(string message, Exception innerException) : base(message, innerException) { }
-
-        public FtpResponseException(string message, FtpWebResponse response) : base(message)
-        {
-            Response = response;
-        }
-
-        public FtpResponseException(string message, FtpWebResponse response, Exception innerException)
-            : base(message, innerException)
-        {
-            Response = response;
-        }
-
-        public override string ToString()
-        {
-            string res = "FtpResponseException: " + Message;
-
-            if(Response != null)
-            {
-                res += "\r\nResponse Status: " + Response.StatusCode + "\r\nStatus Description:" + Response.StatusDescription;
-            }
-
-            return res;
-        }
     }
 }

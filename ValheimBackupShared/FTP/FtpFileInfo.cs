@@ -4,6 +4,15 @@ using System.Text.RegularExpressions;
 
 namespace ValheimBackup.FTP
 {
+    /// <summary>
+    /// Represents a file OR directory that has been downloaded from
+    /// an external FTP server. 
+    /// <br/><br/>
+    /// Given a file string in the format returned by the FTP response, will
+    /// parse the file string to determing information about the
+    /// file/directory. Has the ability to store it's contents if the object
+    /// is a file.
+    /// </summary>
     public class FtpFileInfo
     {
         private const string DATE_FORMAT = "MMM dd HH:mm";
@@ -18,52 +27,86 @@ namespace ValheimBackup.FTP
         private DateTime _lastModified;
         private bool _isDirectory;
 
+        /// <summary>
+        /// Name of the remote file (excluding path and extension)
+        /// </summary>
         public string Name
         {
             get => _name;
         }
 
+        /// <summary>
+        /// Extension of the remote file (including the preceding dot)
+        /// </summary>
         public string Extension
         {
             get => _ext;
         }
 
+        /// <summary>
+        /// Full name of the remote file (including extension, excluding path)
+        /// </summary>
         public string FullName
         {
             get => _name + _ext;
         }
 
+        /// <summary>
+        /// Unix-style permissions string representing the permissions of the
+        /// file on the remote server.
+        /// </summary>
         public string Permissions
         {
             get => _permissions;
         }
 
+        /// <summary>
+        /// Raw contents of the remote file. Used to write a copy to the local disk.
+        /// </summary>
         public string Contents
         {
             get => _contents;
             set => _contents = value;
         }
 
+        /// <summary>
+        /// Date the remote file was last modified.
+        /// </summary>
         public DateTime LastModified
         {
             get => _lastModified;
         }
 
+        /// <summary>
+        /// Size of the files contents in bytes, as represented in the remote
+        /// file string.
+        /// </summary>
         public int Size
         {
             get => _size;
         }
 
+        /// <summary>
+        /// File size converted to KB
+        /// </summary>
         public double SizeKB
         {
             get => Size / 1024;
         }
 
+        /// <summary>
+        /// File size converted to MB
+        /// </summary>
         public double SizeMB
         {
             get => SizeKB / 1024;
         }
 
+        /// <summary>
+        /// Returns a calculated string of the file size, using the smallest
+        /// unit that would result in a size value greater than 1, and the
+        /// appropriate unit label.
+        /// </summary>
         public string SizeDisplay
         {
             get
@@ -83,16 +126,27 @@ namespace ValheimBackup.FTP
             }
         }
 
+        /// <summary>
+        /// True if this object represents a directory
+        /// </summary>
         public bool IsDirectory
         {
             get => _isDirectory;
         }
 
+        /// <summary>
+        /// Ture if this object represents a file
+        /// </summary>
         public bool IsFile
         {
             get => !_isDirectory;
         }
 
+        /// <summary>
+        /// Create a new FtpFileInfo object by parsing the details of the
+        /// provided unix-style remote file string.
+        /// </summary>
+        /// <param name="fileString">the unix-style file description string to parse</param>
         public FtpFileInfo(string fileString)
         {
             if(!ValidFileString(fileString))
@@ -121,6 +175,17 @@ namespace ValheimBackup.FTP
             }
         }
 
+        /// <summary>
+        /// Determines whether the provided file string is valid (determined
+        /// by attempting to match the file-string regex, and detecting any
+        /// errors). If the regex matches without any issues, the file string
+        /// is considered valid.
+        /// </summary>
+        /// <param name="fileString">The file string to test for validity</param>
+        /// <returns>
+        /// If the string is valid: <code>true</code>
+        /// Otherwise: <code>false</code>
+        /// </returns>
         public static bool ValidFileString(string fileString)
         {
             try
@@ -135,32 +200,14 @@ namespace ValheimBackup.FTP
             }
         }
 
+        /// <summary>
+        /// Returns a string representation of the details of the file, in the
+        /// format of: <[D] / [F]> {FullName} ({LastModified} - {SizeDisplay} 
+        /// </summary>
+        /// <returns>String representation of object.</returns>
         public override string ToString()
         {
             return (IsDirectory ? "[D]" : "[F]") + " " + FullName + " (" + LastModified.ToString(DATE_FORMAT) + " - " + SizeDisplay + ")";
-        }
-    }
-
-    public class FtpFileStringFormatException : FormatException
-    {
-        public string FileString
-        {
-            get; set;
-        }
-
-        public FtpFileStringFormatException(string message, string fileString) : base(message, null)
-        {
-            FileString = fileString;
-        }
-
-        public FtpFileStringFormatException(string message, string fileString, Exception innerException) : base(message, innerException)
-        {
-            FileString = fileString;
-        }
-
-        public override string ToString()
-        {
-            return Message + ": " + FileString;
         }
     }
 }

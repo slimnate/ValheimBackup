@@ -3,6 +3,13 @@ using Newtonsoft.Json;
 
 namespace ValheimBackup.BO
 {
+    /// <summary>
+    /// Represents a pair of files (one being the source from the remote FTP
+    /// server, the other being the local file where the backup was saved)
+    /// and information associated with the files (name, time hash, extension)
+    /// 
+    /// Implements INotifyPropertyChanged interface and Newtonsoft.JSON serialization attributes
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class BackupFilePair : INotifyPropertyChanged
     {
@@ -12,6 +19,9 @@ namespace ValheimBackup.BO
         private string _timeHash;
         private string _extension;
 
+        /// <summary>
+        /// Name of the file (excluding full path, extension, and time hash)
+        /// </summary>
         [JsonProperty]
         public string Name
         {
@@ -26,6 +36,12 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// The time hash of the file pair, should be calculated from
+        /// the date/time of backup creation, and be unique to each backup.
+        /// This is what is used to ensure no naming conflicts between files
+        /// for the same world/server.
+        /// </summary>
         [JsonProperty]
         public string TimeHash
         {
@@ -40,6 +56,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// The file extension of the file pair
+        /// </summary>
         [JsonProperty]
         public string Extension
         {
@@ -54,6 +73,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Path to the source file (remote FTP path)
+        /// </summary>
         [JsonProperty]
         public string SourcePath
         {
@@ -68,6 +90,9 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Path to the local copy of the remote file
+        /// </summary>
         [JsonProperty]
         public string DestinationPath
         {
@@ -82,13 +107,29 @@ namespace ValheimBackup.BO
             }
         }
 
+        /// <summary>
+        /// Empty default constructor for JSON deserialization
+        /// </summary>
         public BackupFilePair() { }
 
+        /// <summary>
+        /// Create a new BackupFilePair with the specified params
+        /// </summary>
+        /// <param name="source">source file path</param>
+        /// <param name="destination">destination file path</param>
+        /// <param name="name">file name</param>
+        /// <param name="extension">file extension</param>
+        /// <param name="timeHash">time hash</param>
         public BackupFilePair(string source, string destination, string name, string extension, string timeHash)
         {
             _sourcePath = source;
             _destinationPath = destination;
+            _name = name;
+            _extension = extension;
+            _timeHash = timeHash;
         }
+
+        #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -99,5 +140,7 @@ namespace ValheimBackup.BO
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #endregion
     }
 }
