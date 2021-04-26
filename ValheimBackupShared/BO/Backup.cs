@@ -18,6 +18,7 @@ namespace ValheimBackup.BO
     {
         private long _id;
         private long _serverId;
+        private Server _server;
         private string _worldName;
         private DateTime _backupTime;
         private List<BackupFilePair> _files;
@@ -108,6 +109,27 @@ namespace ValheimBackup.BO
                     _files = value;
                     NotifyPropertyChanged("Files");
                 }
+            }
+        }
+
+        public Server Server
+        {
+            get => _server;
+            set
+            {
+                if(_server != value)
+                {
+                    _server = value;
+                    NotifyPropertyChanged("Server");
+                }
+            }
+        }
+
+        public string FileCount
+        {
+            get
+            {
+                return Files.Count + " files";
             }
         }
 

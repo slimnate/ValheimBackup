@@ -29,7 +29,8 @@ namespace ValheimBackup
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = App.Servers;
+            ListServers.DataContext = App.Servers;
+            ListBackups.DataContext = App.Backups;
         }
 
         private void ButtonAddServer_Click(object sender, RoutedEventArgs e)
@@ -93,6 +94,11 @@ namespace ValheimBackup
             BackupDataManager.SaveData(backups);
 
             return;
+        }
+
+        private void ButtonRestoreBackup_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -43,6 +43,16 @@ namespace ValheimBackup
             Servers = new BetterObservableCollection<Server>(ServerDataManager.LoadData());
             Backups = new BetterObservableCollection<Backup>(BackupDataManager.LoadData());
 
+            //associate servers/backups with one another based on ID's
+            foreach(var server in Servers)
+            {
+                server.Backups = Backups.For(server) as List<Backup>;
+            }
+            foreach(var backup in Backups)
+            {
+                backup.Server = Servers.For(backup);
+            }
+
             //add event listeners to save each time server collection changes.
             Servers.CollectionChanged += PersistantData_Changed;
             Backups.CollectionChanged += PersistantData_Changed;
@@ -58,7 +68,8 @@ namespace ValheimBackup
             //serialize application data
             ServerDataManager.SaveData(Servers.ToList());
 
-            BackupDataManager.SaveData(Backups.ToList());
+            //don't persist backup data until we have it updated with file watcher
+            //BackupDataManager.SaveData(Backups.ToList());
 
             DataManager.SaveSettings();
         }
