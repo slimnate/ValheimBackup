@@ -44,14 +44,7 @@ namespace ValheimBackup
             Backups = new BetterObservableCollection<Backup>(BackupDataManager.LoadData());
 
             //associate servers/backups with one another based on ID's
-            foreach(var server in Servers)
-            {
-                server.Backups = Backups.For(server) as List<Backup>;
-            }
-            foreach(var backup in Backups)
-            {
-                backup.Server = Servers.For(backup);
-            }
+            AssociateCollections();
 
             //add event listeners to save each time server collection changes.
             Servers.CollectionChanged += PersistantData_Changed;
@@ -72,6 +65,28 @@ namespace ValheimBackup
             //BackupDataManager.SaveData(Backups.ToList());
 
             DataManager.SaveSettings();
+        }
+
+        /// <summary>
+        /// Associates the server and backup collections with one another based on their ID's
+        /// <br/>
+        /// For <code>Server</code> objects, their <code>Backups</code> property will be populated
+        /// with a <code>List<Backup></code> with all backups for this server.
+        /// <br/>
+        /// For <code>Backup</code> objects, their <code>Server</code> property will be populated with
+        /// the <code>Server</code> that they came from.
+        /// </summary>
+        public static void AssociateCollections()
+        {
+            foreach (var server in Servers)
+            {
+                server.Backups = Backups.For(server) as List<Backup>;
+            }
+
+            foreach (var backup in Backups)
+            {
+                backup.Server = Servers.For(backup);
+            }
         }
     }
 }

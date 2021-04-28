@@ -85,13 +85,18 @@ namespace ValheimBackup
 
             var backups = DataManager.BackupFtpFiles(server, files);
 
+            // replace backups in memory
+            App.Backups.Clear();
             foreach(var b in backups)
             {
                 App.Backups.Add(b);
             }
 
-            //save files to backup location
+            // save files to backup location
             BackupDataManager.SaveData(backups);
+
+            // associate the backups and servers with one another from the new backup
+            App.AssociateCollections();
 
             return;
         }
