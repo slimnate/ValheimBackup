@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ValheimBackup"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="600">
+        Title="MainWindow" Height="500" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -15,8 +16,12 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-
-        <Label Content="Server List:" Grid.Row="0" Style="{StaticResource FormSectionHeadingStyle}"/>
+        
+        <!-- Labels -->
+        <Label Content="Servers:" Grid.Row="0" Grid.Column="0" Style="{StaticResource FormSectionHeadingStyle}"/>
+        <Label Content="Backups:" Grid.Row="0" Grid.Column="1" Style="{StaticResource FormSectionHeadingStyle}"/>
+        
+        <!-- Server list -->
         <ListView x:Name="ListServers" ItemsSource="{Binding}" Grid.Row="1" >
             
             <ListView.ItemTemplate>
@@ -49,11 +54,71 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackPanel Grid.Row="2" Style="{StaticResource FormBottomButtonBarStyle}">
+        
+        <!-- Server Details grid, datacontext bound to selected item in server list
+        <Grid Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=ListServers}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" HorizontalAlignment="Right" Content="{Binding Name}" Style="{StaticResource FormSectionHeadingStyle}" />
+            <Label Grid.Row="0" Grid.Column="1" Content="{Binding Description}" />
+
+            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Content="{Binding ConnectionInfo}" />
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding BackupSettings}" />
+
+            <ListView Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding Backups}">
+                
+            </ListView>
+
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource FormBottomButtonBarStyle}">
+                <Button x:Name="ButtonRestoreBackup" Content="Restore" Click="ButtonRestoreBackup_Click" Style="{StaticResource FormBottomButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+        -->
+        
+        <!-- Backup List -->
+        <ListView x:Name="ListBackups" ItemsSource="{Binding}" Grid.Row="1" Grid.Column="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        
+                        <Label Grid.Row="0" Grid.Column="0" Content="{Binding Server.Name}"></Label>
+                        <Label Grid.Row="0" Grid.Column="1" FontWeight="Bold" Content="{Binding WorldName}"></Label>
+
+                        <Label Grid.Row="1" Grid.Column="0" FontSize="10" Content="{Binding BackupTime}"></Label>
+                        <Label Grid.Row="1" Grid.Column="1" Content="{Binding FileCount}"></Label>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <!-- Server Action button row -->
+        <StackPanel Grid.Row="2" Grid.Column="0" Style="{StaticResource FormBottomButtonBarStyle}">
             <Button x:Name="ButtonBackupServer" Content="BackupNow" Click="ButtonBackupServer_Click"  Style="{StaticResource FormBottomButtonStyle}"/>
             <Button x:Name="ButtonRemoveServer" Content="Remove" Click="ButtonRemoveServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
             <Button x:Name="ButtonEditServer" Content="Edit" Click="ButtonEditServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
             <Button x:Name="ButtonAddServer" Content="Add Server" Click="ButtonAddServer_Click" Style="{StaticResource FormBottomButtonStyle}"/>
+        </StackPanel>
+        
+        <!-- Backup Action button row -->
+        <StackPanel Grid.Row="2" Grid.Column="1" Style="{StaticResource FormBottomButtonBarStyle}">
+            <Button x:Name="ButtonRestoreBackup" Content="Restore" Click="ButtonRestoreBackup_Click" Style="{StaticResource FormBottomButtonStyle}"/>
         </StackPanel>
         
     </Grid>

@@ -15,9 +15,12 @@ namespace ValheimBackup.FTP
     /// </summary>
     public class FtpFileInfo
     {
-        private const string DATE_FORMAT = "MMM dd HH:mm";
+        private const string DATE_TIME_FORMAT = "MMM dd HH:mm";
+        private const string DATE_FORMAT = "MMM dd  yyyy";
+
+        // regex editor: https://regex101.com/r/3Udbmn/1
         private const string FILE_INFO_PATTERN =
-            @"(?<perms>[drwx-]{10})\s\d+\sftp\sftp\s*(?<size>\d+)\s(?<modified>\w{1,3}\s\d{2}\s\d{2}:\d{2})\s(?<name>.*)";
+            @"(?<perms>[drwx-]{10})\s\d+\sftp\sftp\s*(?<size>\d+)\s(?<modified>\w{1,3}\s\d{2}\s*\d{2}:*\d{2})\s(?<name>.*)";
 
         private string _name;
         private string _ext;
@@ -158,8 +161,21 @@ namespace ValheimBackup.FTP
 
             _permissions = matches.Groups["perms"].Value;
             _size = int.Parse(matches.Groups["size"].Value);
-            _lastModified = DateTime.ParseExact(matches.Groups["modified"].Value, DATE_FORMAT, CultureInfo.InvariantCulture);
             _isDirectory = _permissions[0] == 'd';
+
+            var modifiedString = matches.Groups["modified"].Value;
+            try
+            {
+                //try date format that includes time (newer files)
+                _lastModified = DateTime.ParseExact(modifiedString, DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
+            } catch(FormatException e)
+            {
+                try
+                {
+                    // fall back to date format with year in place of time (older files)
+                    _lastModified = DateTime.ParseExact(modifiedString, DATE_FORMAT, CultureInfo.InvariantCulture);
+                } catch { throw; }
+            }
 
             var nameString = matches.Groups["name"].Value;
             if(nameString.Contains("."))
@@ -207,7 +223,7 @@ namespace ValheimBackup.FTP
         /// <returns>String representation of object.</returns>
         public override string ToString()
         {
-            return (IsDirectory ? "[D]" : "[F]") + " " + FullName + " (" + LastModified.ToString(DATE_FORMAT) + " - " + SizeDisplay + ")";
+            return (IsDirectory ? "[D]" : "[F]") + " " + FullName + " (" + LastModified.ToString(DATE_TIME_FORMAT) + " - " + SizeDisplay + ")";
         }
     }
 }

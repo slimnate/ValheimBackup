@@ -29,7 +29,8 @@ namespace ValheimBackup
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = App.Servers;
+            ListServers.DataContext = App.Servers;
+            ListBackups.DataContext = App.Backups;
         }
 
         private void ButtonAddServer_Click(object sender, RoutedEventArgs e)
@@ -84,15 +85,25 @@ namespace ValheimBackup
 
             var backups = DataManager.BackupFtpFiles(server, files);
 
+            // replace backups in memory
+            App.Backups.Clear();
             foreach(var b in backups)
             {
                 App.Backups.Add(b);
             }
 
-            //save files to backup location
+            // save files to backup location
             BackupDataManager.SaveData(backups);
 
+            // associate the backups and servers with one another from the new backup
+            App.AssociateCollections();
+
             return;
+        }
+
+        private void ButtonRestoreBackup_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

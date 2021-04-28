@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ValheimBackup.BO;
 
 namespace ValheimBackup.Extensions
 {
@@ -37,6 +38,26 @@ namespace ValheimBackup.Extensions
             }
 
             this.SetItem(i, replacement);
+        }
+
+        public IEnumerable<T> For(Server server)
+        {
+            if(typeof(T) != typeof(Backup))
+            {
+                throw new Exception("Can only call For(Server) on collection of type Backup");
+            }
+
+            return this.Where(x => (x as Backup).ServerId == server.Id);
+        }
+
+        public T For(Backup backup)
+        {
+            if (typeof(T) != typeof(Server))
+            {
+                throw new Exception("Can only call For(Backup) on collection of type Server");
+            }
+
+            return this.Where(x => (x as Server).Id == backup.ServerId).First();
         }
     }
 }
